@@ -190,19 +190,19 @@ void
 palloc_get_status (enum palloc_flags flags)
 {
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
-  size_t pages = flags & PAL_USER ? user_pages : kernel_pages;
 
-  printf("%d\n", bitmap_size(pool->used_map));
-
-  lock_acquire(&pool->used_map);
-  for (size_t i = 0; i < bitmap_size(pool->used_map); i++) {
-    void *page = pool->base + PGSIZE * i;
+  size_t i;
+  void *page = pool->base;
+  //lock_acquire(&pool->used_map);
+  for (i = 0; i < bitmap_size(pool->used_map); i++) {
     printf("%d ", page_from_pool(pool, page));
     
     if (i % 32 == 0)
       printf("\n");
+
+    page += PGSIZE;
   }
-  lock_release(&pool->used_map);
+  //lock_release(&pool->used_map);
 
 }
 
