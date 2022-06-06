@@ -189,6 +189,7 @@ bool page_is_empty(const struct bitmap *b, size_t idx) {
   ASSERT(b != NULL);
   ASSERT(idx < bitmap_size(b));
 
+  printf("%d", PGSIZE);
   return bitmap_contains(b, idx, PGSIZE, false);
 }
 
