@@ -229,9 +229,11 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
       return start;
   }
   else {
+    printf("first call : s-%d e-%d\n", start, gap/2);
     size_t first = buddy_find(b, page_cnt, start, gap / 2);
     if (first != BUDDY_NOT_FOUND)
       return first;
+    printf("second call : s-%d e-%d\n", gap/2+1, end);
     size_t second = buddy_find(b, page_cnt, gap / 2 + 1, end);
     if (second != BUDDY_NOT_FOUND)
       return second;
