@@ -189,7 +189,7 @@ bool page_is_empty(const struct bitmap *b, size_t idx) {
   ASSERT(b != NULL);
   ASSERT(idx < bitmap_size(b));
 
-  return bitmap_any(b, idx, 1);
+  return !bitmap_contains(b, idx, 1, true);
 }
 
 /* Obtains a status of the page pool */
