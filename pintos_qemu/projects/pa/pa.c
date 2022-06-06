@@ -12,10 +12,10 @@ void run_patest(char **argv)
 {   
 
     while (1) {
-        printf("----------------------- use pool pages -----------------------");
+        printf("----------------------- use pool pages -----------------------\n");
         palloc_get_status(PAL_USER);
 
-        printf("----------------------- kernel pool pages --------------------");
+        printf("\n----------------------- kernel pool pages --------------------\n");
         palloc_get_status(0);
 
         timer_msleep(1000);
