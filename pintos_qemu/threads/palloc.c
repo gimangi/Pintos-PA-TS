@@ -185,6 +185,13 @@ page_from_pool (const struct pool *pool, void *page)
   return page_no >= start_page && page_no < end_page;
 }
 
+bool page_is_empty(const struct bitmap *b, size_t idx) {
+  ASSERT(b != NULL);
+  ASSERT(bitmap_size(b) < idx);
+
+  return bitmap_contains(b, idx, PGSIZE, false);
+}
+
 /* Obtains a status of the page pool */
 void
 palloc_get_status (enum palloc_flags flags)
@@ -195,9 +202,10 @@ palloc_get_status (enum palloc_flags flags)
   void *page = pool->base;
   //lock_acquire(&pool->used_map);
   for (i = 0; i < bitmap_size(pool->used_map); i++) {
-    printf("%d ", page_from_pool(pool, page));
-    
-    if (i % 32 == 0)
+    //printf("%d ", page_from_pool(pool, page));
+    printf("%d ", page_is_empty(pool, i));
+
+    if (i != 0 && i % 32 == 0)
       printf("\n");
 
     page += PGSIZE;
