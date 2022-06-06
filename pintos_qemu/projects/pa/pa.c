@@ -27,8 +27,8 @@ void run_patest(char **argv)
         print_kernel_pool_page();
 
         print_user_pool_page();
-        palloc_get_multiple(0, 15);
-        palloc_get_page(0);
+        palloc_get_multiple(PAL_USER, 15);
+        palloc_get_page(PAL_USER);
         print_user_pool_page();
         print_kernel_pool_page();
 

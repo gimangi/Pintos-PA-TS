@@ -11,6 +11,8 @@
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 
+#define BUDDY_NOT_FOUND SIZE_MAX
+
 /* Page allocator.  Hands out memory in page-size (or
    page-multiple) chunks.  See malloc.h for an allocator that
    hands out smaller chunks.
@@ -40,6 +42,7 @@ static size_t user_pages, kernel_pages;
 static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
 static bool page_from_pool (const struct pool *, void *page);
+size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool value);
 
 /* Initializes the page allocator.  At most USER_PAGE_LIMIT
    pages are put into the user pool. */
@@ -82,7 +85,9 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     return NULL;
 
   lock_acquire (&pool->lock);
-  page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false); // TODO : modify
+  //page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false); // TODO : modify
+  page_idx = bitmap_scan_buddy_and_flip (pool->used_map, page_cnt, false);
+
   lock_release (&pool->lock);
 
   if (page_idx != BITMAP_ERROR)
@@ -186,10 +191,14 @@ page_from_pool (const struct pool *pool, void *page)
 }
 
 bool page_is_empty(const struct bitmap *b, size_t idx) {
+  return page_is_empty_multiple(b, idx, 1);
+}
+
+bool page_is_empty_multiple(const struct bitmap *b, size_t idx, size_t cnt) {
   ASSERT(b != NULL);
   ASSERT(idx < bitmap_size(b));
 
-  return !bitmap_contains(b, idx, 1, true);
+  return !bitmap_contains(b, idx, cnt, true);
 }
 
 /* Obtains a status of the page pool */
@@ -199,23 +208,45 @@ palloc_get_status (enum palloc_flags flags)
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
 
   size_t i;
-  void *page = pool->base;
-  //lock_acquire(&pool->used_map);
   for (i = 0; i < bitmap_size(pool->used_map); i++) {
-    //printf("%d ", page_from_pool(pool, page));
     printf("%d ", !page_is_empty(pool->used_map, i));
 
+    // 32 page status per line
     if (i % 32 == 31)
       printf("\n");
-
-    page += PGSIZE;
   }
-  //lock_release(&pool->used_map);
 
 }
 
-//size_t
-//palloc_get_page_buddy(const struct pool* pool, size_t pages) 
-//{
- // pool->used_map
-//}
+size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t end) {
+  size_t gap = end - start;
+  // If the gap is smaller than the page size, an error is returned.
+  if (gap < 1)
+    return BUDDY_NOT_FOUND;
+
+  if (page_cnt < (gap / 2) && page_cnt <= gap) {
+    if (page_is_empty_multiple(b, start, page_cnt))
+      return start;
+  }
+  else {
+    size_t first = buddy_find(b, page_cnt, start, gap / 2);
+    if (first != BUDDY_NOT_FOUND)
+      return first;
+    size_t second = buddy_find(b, page_cnt, gap / 2, end);
+    if (second != BUDDY_NOT_FOUND)
+      return second;
+  }
+  return BUDDY_NOT_FOUND;
+}
+
+size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool value) {
+  size_t msize = bitmap_size(b);
+  size_t find;
+
+  find = buddy_find(b, page_cnt, 0, msize);
+  if (find == BUDDY_NOT_FOUND)
+    return BITMAP_ERROR;
+  bitmap_set_multiple(b, find, page_cnt, !value);
+
+  return find;
+}
