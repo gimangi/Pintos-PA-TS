@@ -252,6 +252,8 @@ bitmap_contains (const struct bitmap *b, size_t start, size_t cnt, bool value)
 {
   size_t i;
   
+  printf("bit cnt : %d", b->bit_cnt);
+
   ASSERT (b != NULL);
   ASSERT (start <= b->bit_cnt);
   ASSERT (start + cnt <= b->bit_cnt);

@@ -189,7 +189,7 @@ bool page_is_empty(const struct bitmap *b, size_t idx) {
   ASSERT(b != NULL);
   ASSERT(idx < bitmap_size(b));
 
-  return bitmap_contains(b, idx, PGSIZE, false);
+  return bitmap_any(b, idx, idx+PGSIZE);
 }
 
 /* Obtains a status of the page pool */
@@ -197,8 +197,6 @@ void
 palloc_get_status (enum palloc_flags flags)
 {
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
-
-  printf("pg size : %d", PGSIZE);
 
   size_t i;
   void *page = pool->base;
