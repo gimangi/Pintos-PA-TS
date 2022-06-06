@@ -224,7 +224,7 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
   if (gap < 1)
     return BUDDY_NOT_FOUND;
 
-  if (page_cnt < (gap / 2) && page_cnt <= gap) {
+  if ((gap / 2) < page_cnt && page_cnt <= gap) {
     if (page_is_empty_multiple(b, start, page_cnt))
       return start;
   }
