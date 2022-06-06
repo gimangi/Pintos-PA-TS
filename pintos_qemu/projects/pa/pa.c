@@ -8,15 +8,24 @@
 #include "threads/thread.h"
 #include "projects/pa/pa.h"
 
+void print_user_pool_page() {
+    printf("----------------------- use pool pages -----------------------\n");
+        palloc_get_status(PAL_USER);
+}
+
+void print_kernel_pool_page() {
+    printf("\n----------------------- kernel pool pages --------------------\n");
+        palloc_get_status(0);
+}
+
 void run_patest(char **argv)
 {   
 
     while (1) {
-        printf("----------------------- use pool pages -----------------------\n");
-        palloc_get_status(PAL_USER);
-
-        printf("\n----------------------- kernel pool pages --------------------\n");
-        palloc_get_status(0);
+        print_user_pool_page();
+        palloc_get_page(0);
+        palloc_get_page(0);
+        print_user_pool_page();
 
         timer_msleep(1000);
     }

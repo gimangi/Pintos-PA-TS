@@ -205,7 +205,7 @@ palloc_get_status (enum palloc_flags flags)
     //printf("%d ", page_from_pool(pool, page));
     printf("%d ", page_is_empty(pool->used_map, i));
 
-    if (i != 0 && i % 32 == 0)
+    if (i % 32 == 31)
       printf("\n");
 
     page += PGSIZE;
