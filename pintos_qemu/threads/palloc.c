@@ -193,12 +193,14 @@ palloc_get_status (enum palloc_flags flags)
   struct bitmap *b = pool->used_map;
   size_t pages = flags & PAL_USER ? user_pages : kernel_pages;
 
-   lock_acquire(&pool->used_map);
-   for (size_t i = 0; i < pages; i++) {
-     void *page = pool->base + PGSIZE * i;
-     printf("%d ", page_from_pool(pool, page));
-   }
-   lock_release(&pool->used_map);
+  printf("%d\n", pages);
+
+  lock_acquire(&pool->used_map);
+  for (size_t i = 0; i < pages; i++) {
+    void *page = pool->base + PGSIZE * i;
+    printf("%d ", page_from_pool(pool, page));
+  }
+  lock_release(&pool->used_map);
 
 }
 
