@@ -189,15 +189,15 @@ page_from_pool (const struct pool *pool, void *page)
 void
 palloc_get_status (enum palloc_flags flags)
 {
-  struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
-  struct bitmap *b = pool->used_map;
+  //struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
+  //struct bitmap *b = pool->used_map;
 
-  lock_acquire(&pool->used_map);
-  for (size_t i = 0; i < b->bit_cnt; i++) {
-    void *page = pool->base + PGSIZE * i;
-    printf("%d ", page_from_pool(pool, page));
-  }
-  lock_release(&pool->used_map);
+  // lock_acquire(&pool->used_map);
+  // for (size_t i = 0; i < b->bit_cnt; i++) {
+  //   void *page = pool->base + PGSIZE * i;
+  //   printf("%d ", page_from_pool(pool, page));
+  // }
+  // lock_release(&pool->used_map);
 
 }
 
