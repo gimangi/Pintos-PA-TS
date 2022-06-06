@@ -198,7 +198,7 @@ palloc_get_status (enum palloc_flags flags)
 {
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
 
-  pritnf("pg size : %d", PGSIZE);
+  printf("pg size : %d", PGSIZE);
 
   size_t i;
   void *page = pool->base;
