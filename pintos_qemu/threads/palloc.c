@@ -203,7 +203,7 @@ palloc_get_status (enum palloc_flags flags)
   //lock_acquire(&pool->used_map);
   for (i = 0; i < bitmap_size(pool->used_map); i++) {
     //printf("%d ", page_from_pool(pool, page));
-    printf("%d ", page_is_empty(pool->used_map, i));
+    printf("%d ", !page_is_empty(pool->used_map, i));
 
     if (i % 32 == 31)
       printf("\n");

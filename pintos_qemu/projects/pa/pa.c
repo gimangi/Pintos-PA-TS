@@ -24,10 +24,13 @@ void run_patest(char **argv)
 {   
 
     while (1) {
+        print_kernel_pool_page();
+
         print_user_pool_page();
         palloc_get_multiple(0, 15);
         palloc_get_page(0);
         print_user_pool_page();
+        print_kernel_pool_page();
 
         timer_msleep(1000);
     }
