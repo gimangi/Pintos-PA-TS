@@ -187,7 +187,7 @@ page_from_pool (const struct pool *pool, void *page)
 
 bool page_is_empty(const struct bitmap *b, size_t idx) {
   ASSERT(b != NULL);
-  ASSERT(bitmap_size(b) < idx);
+  ASSERT(idx < bitmap_size(b));
 
   return bitmap_contains(b, idx, PGSIZE, false);
 }
