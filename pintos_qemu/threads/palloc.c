@@ -1,6 +1,5 @@
 #include "threads/palloc.h"
 #include <bitmap.h>
-#include <bitmap.c>
 #include <debug.h>
 #include <inttypes.h>
 #include <round.h>
