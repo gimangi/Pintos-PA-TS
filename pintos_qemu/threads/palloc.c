@@ -1,5 +1,5 @@
 #include "threads/palloc.h"
-#include <bitmap.c>
+#include <bitmap.h>
 #include <debug.h>
 #include <inttypes.h>
 #include <round.h>
@@ -35,6 +35,7 @@ struct pool
 
 /* Two pools: one for kernel data, one for user pages. */
 static struct pool kernel_pool, user_pool;
+static size_t user_pages, kernel_pages;
 
 static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
@@ -49,8 +50,8 @@ palloc_init (size_t user_page_limit)
   uint8_t *free_start = ptov (1024 * 1024);
   uint8_t *free_end = ptov (init_ram_pages * PGSIZE);
   size_t free_pages = (free_end - free_start) / PGSIZE;
-  size_t user_pages = free_pages / 2;
-  size_t kernel_pages;
+  user_pages = free_pages / 2;
+  
   if (user_pages > user_page_limit)
     user_pages = user_page_limit;
   kernel_pages = free_pages - user_pages;
@@ -190,9 +191,10 @@ palloc_get_status (enum palloc_flags flags)
 {
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
   struct bitmap *b = pool->used_map;
+  size_t pages = flags & PAL_USER ? user_pages : kernel_pages;
 
    lock_acquire(&pool->used_map);
-   for (size_t i = 0; i < b->bit_cnt; i++) {
+   for (size_t i = 0; i < pages; i++) {
      void *page = pool->base + PGSIZE * i;
      printf("%d ", page_from_pool(pool, page));
    }
