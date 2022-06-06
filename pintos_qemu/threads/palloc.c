@@ -190,15 +190,15 @@ page_from_pool (const struct pool *pool, void *page)
   return page_no >= start_page && page_no < end_page;
 }
 
-bool page_is_empty(const struct bitmap *b, size_t idx) {
-  return page_is_empty_multiple(b, idx, 1);
-}
-
 bool page_is_empty_multiple(const struct bitmap *b, size_t idx, size_t cnt) {
   ASSERT(b != NULL);
   ASSERT(idx < bitmap_size(b));
 
   return !bitmap_contains(b, idx, cnt, true);
+}
+
+bool page_is_empty(const struct bitmap *b, size_t idx) {
+  return page_is_empty_multiple(b, idx, 1);
 }
 
 /* Obtains a status of the page pool */
