@@ -245,6 +245,7 @@ size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool
   size_t msize = bitmap_size(b);
   size_t find;
 
+printf("buddy start. bitmap size = %d", msize);
   find = buddy_find(b, page_cnt, 0, msize);
   if (find == BUDDY_NOT_FOUND)
     return BITMAP_ERROR;
