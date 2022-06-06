@@ -1,5 +1,6 @@
 #include "threads/palloc.h"
 #include <bitmap.h>
+#include <bitmap.c>
 #include <debug.h>
 #include <inttypes.h>
 #include <round.h>
@@ -61,6 +62,9 @@ palloc_init (size_t user_page_limit)
              user_pages, "user pool");
 }
 
+//size_t
+//bitmap_scan_buddy_flip(const struct bitmap*)
+
 /* Obtains and returns a group of PAGE_CNT contiguous free pages.
    If PAL_USER is set, the pages are obtained from the user pool,
    otherwise from the kernel pool.  If PAL_ZERO is set in FLAGS,
@@ -78,7 +82,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     return NULL;
 
   lock_acquire (&pool->lock);
-  page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+  page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false); // TODO : modify
   lock_release (&pool->lock);
 
   if (page_idx != BITMAP_ERROR)
@@ -108,7 +112,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
    available, returns a null pointer, unless PAL_ASSERT is set in
    FLAGS, in which case the kernel panics. */
 void *
-palloc_get_page (enum palloc_flags flags) 
+ palloc_get_page (enum palloc_flags flags) 
 {
   return palloc_get_multiple (flags, 1);
 }
@@ -185,7 +189,20 @@ page_from_pool (const struct pool *pool, void *page)
 void
 palloc_get_status (enum palloc_flags flags)
 {
-  //IMPLEMENT THIS
-  //PAGE STATUS 0 if FREE, 1 if USED
-  //32 PAGE STATUS PER LINE
+  struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
+  struct bitmap *b = pool->used_map;
+
+  lock_acquire(&pool->used_map);
+  for (size_t i = 0; i < b->bit_cnt; i++) {
+    void *page = pool->base + PGSIZE * i;
+    printf("%d ", page_from_pool(pool, page));
+  }
+  lock_release(&pool->used_map);
+
 }
+
+//size_t
+//palloc_get_page_buddy(const struct pool* pool, size_t pages) 
+//{
+ // pool->used_map
+//}
