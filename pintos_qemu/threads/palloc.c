@@ -226,7 +226,7 @@ size_t next_pow2(size_t num) {
 
 size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t end) {
 
-  size_t gap = end - start;
+  size_t gap = end - start + 1;
   size_t upper;
 
   // If the gap is smaller than the page size, an error is returned.
@@ -262,7 +262,7 @@ size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool
   ASSERT (page_cnt <= msize);
 
   // debug
-  printf("buddy start. bitmap size = %d\n", msize); 
+  printf("buddy start. bitmap size = %d, page_cnt = %d\n", msize, page_cnt); 
 
   find = buddy_find(b, page_cnt, 0, msize-1);
   if (find == BUDDY_NOT_FOUND)
