@@ -243,11 +243,11 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
     if (upper < 2)
       return BUDDY_NOT_FOUND;
 
-    printf("first call : s-%d e-%d\n", start, start + upper / 2 - 1);
+    //printf("first call : s-%d e-%d\n", start, start + upper / 2 - 1);
     size_t first = buddy_find(b, page_cnt, start, start + upper / 2 - 1);
     if (first != BUDDY_NOT_FOUND)
       return first;
-    printf("second call : s-%d e-%d\n", start + upper / 2, start + upper - 1);
+    //printf("second call : s-%d e-%d\n", start + upper / 2, start + upper - 1);
     size_t second = buddy_find(b, page_cnt, start + upper / 2, start + upper - 1);
     if (second != BUDDY_NOT_FOUND)
       return second;
@@ -262,7 +262,7 @@ size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool
   ASSERT (page_cnt <= msize);
 
   // debug
-  printf("buddy start. bitmap size = %d, page_cnt = %d\n", msize, page_cnt); 
+  //printf("buddy start. bitmap size = %d, page_cnt = %d\n", msize, page_cnt); 
 
   find = buddy_find(b, page_cnt, 0, msize-1);
   if (find == BUDDY_NOT_FOUND)
