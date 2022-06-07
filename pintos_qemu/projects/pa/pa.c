@@ -24,6 +24,10 @@ void print_alloc_pages(int pages) {
     printf("allocate %d pages.\n", pages);
 }
 
+void print_free_pages() {
+    printf("free pages.\n");
+}
+
 void run_patest(char **argv)
 {   
 
@@ -31,13 +35,18 @@ void run_patest(char **argv)
 
     print_user_pool_page();
 
-    palloc_get_multiple(PAL_USER, 15);
+    void * p1 = palloc_get_multiple(PAL_USER, 15);
     print_alloc_pages(15);
 
     print_user_pool_page();
 
     palloc_get_multiple(PAL_USER, 2);
     print_alloc_pages(2);
+
+    print_user_pool_page();
+
+    palloc_free_multiple(p1, 15);
+    print_free_pages();    
 
     print_user_pool_page();
 
