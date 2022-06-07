@@ -240,6 +240,9 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
       return start;
   }
   else {
+    if (upper < 2)
+      return BUDDY_NOT_FOUND;
+
     printf("first call : s-%d e-%d\n", start, start + upper / 2 - 1);
     size_t first = buddy_find(b, page_cnt, start, start + upper / 2 - 1);
     if (first != BUDDY_NOT_FOUND)
