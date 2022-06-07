@@ -243,11 +243,9 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
     if (upper < 2)
       return BUDDY_NOT_FOUND;
 
-    //printf("first call : s-%d e-%d\n", start, start + upper / 2 - 1);
     size_t first = buddy_find(b, page_cnt, start, start + upper / 2 - 1);
     if (first != BUDDY_NOT_FOUND)
       return first;
-    //printf("second call : s-%d e-%d\n", start + upper / 2, start + upper - 1);
     size_t second = buddy_find(b, page_cnt, start + upper / 2, start + upper - 1);
     if (second != BUDDY_NOT_FOUND)
       return second;
@@ -261,9 +259,6 @@ size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool
 
   ASSERT (page_cnt <= msize);
 
-  // debug
-  //printf("buddy start. bitmap size = %d, page_cnt = %d\n", msize, page_cnt); 
-
   find = buddy_find(b, page_cnt, 0, msize-1);
   if (find == BUDDY_NOT_FOUND)
     return BITMAP_ERROR;
@@ -271,14 +266,3 @@ size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool
 
   return find;
 }
-
-/*
-페이지 단위가 아니라 1M짜리 전체 메모리에서 해야한다...,,.,.,.,,.,..,.,.,
-지금은 페이지 번호 기준으로 367 -> ㄹㅇㄴㄹㄴㅇㄹ 이렇게 가고 있는데.....
-흠
-전체 메모리 영역 1M 짜리를,.,.,. 음 아니지
-둘 씩 나눠 가졌으니까 512K인데
-여기서 시작하면 되잖아
-근데 지금은 bitmap 크기를 가져오니까 페이지 개수인 367씩 나오는거고 (512K/4KB) 엥
-왜 페이지가 367개씩이지
-*/
