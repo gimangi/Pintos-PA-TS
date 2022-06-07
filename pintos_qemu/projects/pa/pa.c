@@ -23,15 +23,43 @@ void print_kernel_pool_page() {
 void run_patest(char **argv)
 {   
 
-    while (1) {
-        print_kernel_pool_page();
+    // user pool test
 
-        print_user_pool_page();
-        palloc_get_multiple(PAL_USER, 15);
-        palloc_get_page(PAL_USER);
-        print_user_pool_page();
-        print_kernel_pool_page();
+    print_user_pool_page();
 
-        timer_msleep(1000);
-    }
+    palloc_get_multiple(PAL_USER, 15);
+
+    print_user_pool_page();
+
+    palloc_get_multiple(PAL_USER, 2);
+
+    print_user_pool_page();
+
+    palloc_get_multiple(PAL_USER, 5);
+
+    print_user_pool_page();
+
+    palloc_get_multiple(PAL_USER, 40);
+
+    print_user_pool_page();
+
+    // kernel pool test
+    print_kernel_pool_page();
+
+    palloc_get_multiple(0, 55);
+
+    print_kernel_pool_page();
+
+    palloc_get_multiple(0, 21);
+
+    print_kernel_pool_page();
+
+    palloc_get_page(0);
+
+    print_kernel_pool_page();
+
+    palloc_get_multiple(0, 100);
+
+    print_kernel_pool_page();
+
 }
