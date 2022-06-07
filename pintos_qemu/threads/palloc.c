@@ -220,7 +220,7 @@ palloc_get_status (enum palloc_flags flags)
 
 size_t next_pow2(size_t num) {
   size_t res = 1;
-  whlie (res < num) res <<= 1;
+  while (res < num) res <<= 1;
   return res;
 }
 
