@@ -27,6 +27,7 @@ void test_loop(void *aux)
             break;
     }
     end_count++;
+    printf("ec : %d", end_count);
 }
 
 void run_mfqtest(char **argv)
@@ -56,6 +57,7 @@ void run_mfqtest(char **argv)
         thread_create(name, priority, test_loop, NULL);
 
 		cnt++;
+        prnitf("cnt = %d\n", cnt);
 	}
     intr_set_level (old_level);
     
