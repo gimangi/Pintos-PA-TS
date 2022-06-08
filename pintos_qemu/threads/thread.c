@@ -784,8 +784,9 @@ static void print_queue(const char *name, struct list *q) {
 }
 
 static void print_all_queue() {
+  struct thread *t = thread_current();
   printf("\n================ print all feeedback queue. ===================\n", kernel_ticks);
-  printf("current thread = %s, tick = %d\n\n", thread_current()->name, kernel_ticks);
+  printf("current thread : (name = %s, priority = %d), current tick = %d\n\n", t->name, t->priority, kernel_ticks);
   print_queue("feedback queue 0", &feedback_queue_0);
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
