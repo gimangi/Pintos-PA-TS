@@ -53,8 +53,8 @@ void run_patest(char **argv)
 
     palloc_get_status(PAL_USER);
 
-    palloc_free_multiple(p2, 64);
-    print_free_pages(64);
+    palloc_free_multiple(p2, 65);
+    print_free_pages(65);
 
     palloc_get_status(PAL_USER);
 
