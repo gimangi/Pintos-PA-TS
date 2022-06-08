@@ -769,23 +769,18 @@ static void print_queue(const char *name, struct list *q) {
   struct thread *t;
   int line_count = 0;
 
-  printf("| -------------- %s's status --------------- |\n", name);
+  printf("-------------- %s's status ---------------\n", name);
   if (list_empty(q)) {
-    printf("| queue is empty                             |\n");
+    printf("ㅂueue is empty\n");
     return;
   }
 
   for (iter = list_begin(q); iter != list_end(q); iter = list_next(iter)) {
     t = list_entry (iter, struct thread, elem);
 
-    bool f = ++line_count % 2 == 0;
-
-    if (!f)
-      printf("| ");
-
     printf("thread (name = %s, age = %d)", t->name, t->age);
-    if (f)
-      printf("\t|\n");
+    if (++line_count % 2 == 0)
+      printf("\n");
     else
       printf(", ");
   }
