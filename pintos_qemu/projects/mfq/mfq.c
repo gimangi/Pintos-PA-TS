@@ -61,6 +61,7 @@ void run_mfqtest(char **argv)
     
     while (end_count != cnt) {}
     
+    thread_current()->status = THREAD_DYING;
     thread_block();
 
 }
