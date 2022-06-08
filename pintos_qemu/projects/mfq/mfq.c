@@ -12,7 +12,21 @@
 
 void test_loop(void *aux)
 {
-    /// TODO: make your own test
+    static unsigned int range = 1000000000;
+    tid_t id = thread_tid();
+    unsigned int a = 2;
+
+    // Find the perfect square number in the range [2, 1000000000).
+    while (1) {
+        a = (a + 1) % range;
+        if (a < 2)
+            a = 2;
+        
+        unsigned long long sq = (unsigned long long) a * a;
+        if (sq < range)
+            printf("%d find num : %d", id, a);
+
+    }
 }
 
 void run_mfqtest(char **argv)
