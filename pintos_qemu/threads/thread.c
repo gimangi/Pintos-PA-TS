@@ -73,7 +73,7 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
-
+int debug = -1;
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -146,9 +146,9 @@ thread_start (void)
    Thus, this function runs in an external interrupt context. */
 void
 thread_tick (void) 
-{
+{debug = 1;
+  printf("debug %d", debug);
   struct thread *t = thread_current ();
-  printf("[debug 3] cur thread : %s", t->name);
 
   /* Update statistics. */
   if (t == idle_thread)
@@ -306,8 +306,8 @@ thread_sleep (int64_t tick)
   enum intr_level old_level;
 
   old_level = intr_disable ();
+  debug=2;printf("debug %d", debug);
   cur = thread_current ();
-  printf("[debug 1] cur thread : %s", cur->name);
 
   ASSERT (cur != idle_thread);
 
@@ -403,8 +403,8 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
+  debug=3;printf("debug %d", debug);
   struct thread *cur = thread_current ();
-  printf("[debug 2] cur thread : %s", cur->name);
   enum intr_level old_level;
   
   ASSERT (!intr_context ());
