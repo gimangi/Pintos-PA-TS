@@ -737,6 +737,8 @@ ASSERT(PRI_MIN <= priority && priority <= PRI_MAX);
 /*  All threads in the feedback queue will be aged.
 */
 static void thread_aging_util(struct list* list) {
+  ASSERT(list != NULL);
+
   struct list_elem *iter;
   struct thread *t;
 
@@ -746,11 +748,7 @@ static void thread_aging_util(struct list* list) {
 
     if (t->age >= AGE_MAX) {
       /* remove from current queue */
-      struct list *cur_queue = thread_get_queue(t->priority);
-      iter = list_remove(&t->elem);
-      // prevent circular list
-      // if (list_size(cur_queue) == 0)
-      //   list_begin(cur_queue)->next = NULL;
+      iter = list_remove(iter);
 
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       
