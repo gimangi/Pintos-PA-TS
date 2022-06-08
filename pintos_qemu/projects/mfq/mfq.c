@@ -12,8 +12,6 @@
 
 #define RANGE 20000000
 
-int end_count = 0;
-
 /* One test_cycle executes 20 million loops.
 */
 void test_loop(void *aux)
@@ -26,7 +24,6 @@ void test_loop(void *aux)
         if (a == 0) 
             break;
     }
-    end_count++;
 }
 
 void run_mfqtest(char **argv)
@@ -60,9 +57,7 @@ void run_mfqtest(char **argv)
     intr_set_level (old_level);
     
      while (1) {
-         //timer_msleep(1000);
-         if (end_count == cnt)
-            print_mfq = 0;
+         timer_msleep(1000);
      }
 
 }
