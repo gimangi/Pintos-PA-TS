@@ -60,8 +60,10 @@ void run_mfqtest(char **argv)
     intr_set_level (old_level);
     
     while (1) {
-        printf("ec : %d, cnt : %d", end_count, cnt);
-        if (end_count == cnt) 
-            timer_msleep(1000);
+        if (end_count == cnt) {
+            for (int i = 0; i < 1000000; i++) {}
+            break;
+        }
     }
+    timer_msleep(1000);
 }
