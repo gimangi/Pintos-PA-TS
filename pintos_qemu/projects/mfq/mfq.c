@@ -10,22 +10,18 @@
 #include "devices/timer.h"
 #include "projects/mfq/mfq.h"
 
-/* Find the square number in the range [2, 1000000000).
+/* One cycle executes 1 billion loops.
 */
 void test_loop(void *aux)
 {
     static unsigned int range = 1000000000;
     tid_t id = thread_tid();
-    unsigned int a = 2;
+    unsigned int a = 1;
 
     while (1) {
         a = (a + 1) % range;
-        if (a < 2)
-            a = 2;
-        
-        unsigned long long sq = (unsigned long long) a * a;
-        if (sq < range)
-            printf("%d:%d ", id, sq);
+        if (a == 0)
+            printf("A cycle completed thread %d", id);
 
     }
 }
