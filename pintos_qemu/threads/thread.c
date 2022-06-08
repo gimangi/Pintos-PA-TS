@@ -161,14 +161,14 @@ thread_tick (void)
   else
     kernel_ticks++;
 
-  /* aging */
-  thread_aging(t->priority);
-
+  
   /* Enforce preemption. */
   if (++thread_ticks >= thread_time_slice(t->priority)) {
     print_all_queue();
     intr_yield_on_return ();
   }
+  /* aging */
+  thread_aging(t->priority);
 
 }
 
@@ -794,7 +794,7 @@ static void print_queue(const char *name, struct list *q) {
 static void print_all_queue() {
   struct thread *t = thread_current();
   printf("\n================ print all feeedback queue. ===================\n", kernel_ticks);
-  printf("current thread : (name = %s, priority = %d), current tick = %d, age = %d\n\n", t->name, t->priority, kernel_ticks, t->age);
+  printf("current thread : (name = %s, priority = %d), current tick = %d\n\n", t->name, t->priority, kernel_ticks);
   print_queue("feedback queue 0", &feedback_queue_0);
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
