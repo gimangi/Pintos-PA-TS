@@ -61,7 +61,6 @@ void run_mfqtest(char **argv)
     
     while (1) {
         if (end_count == cnt)
-            break;
-        //timer_msleep(1000);
+            timer_msleep(1000);
     }
 }
