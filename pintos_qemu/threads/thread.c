@@ -623,10 +623,6 @@ thread_schedule_tail (struct thread *prev)
   
   ASSERT (intr_get_level () == INTR_OFF);
 
-  /* prev thread move to higher priority queue */
-  prev->priority = (prev->priority > PRI_MIN) ? prev->priority - 1 : PRI_MIN;
-  list_push_back (thread_get_queue(prev->priority), &prev->elem);  
-
   /* Mark us as running. */
   cur->status = THREAD_RUNNING;
   
@@ -649,6 +645,10 @@ thread_schedule_tail (struct thread *prev)
       ASSERT (prev != cur);
       palloc_free_page (prev);
     }
+
+  /* prev thread move to higher priority queue */
+  prev->priority = (prev->priority > PRI_MIN) ? prev->priority - 1 : PRI_MIN;
+  list_push_back (thread_get_queue(prev->priority), &prev->elem);  
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
