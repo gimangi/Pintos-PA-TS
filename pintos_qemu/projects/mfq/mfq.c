@@ -12,6 +12,7 @@
 
 #define RANGE 20000000
 
+
 int end_count = 0;
 
 /* One test_cycle executes 20 million loops.
@@ -27,7 +28,6 @@ void test_loop(void *aux)
             break;
     }
     end_count++;
-    printf("ec : %d", end_count);
 }
 
 void run_mfqtest(char **argv)
@@ -57,17 +57,10 @@ void run_mfqtest(char **argv)
         thread_create(name, priority, test_loop, NULL);
 
 		cnt++;
-        printf("cnt = %d\n", cnt);
 	}
     intr_set_level (old_level);
     
-    while (1) {
-        if (end_count == cnt)
-            timer_msleep(100000);
-    }
-    // thread_exit();
     // while (1) {
     //     timer_msleep(1000);
     // }
-
 }
