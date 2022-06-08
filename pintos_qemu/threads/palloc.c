@@ -208,7 +208,7 @@ palloc_get_status (enum palloc_flags flags)
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
   size_t size = bitmap_size(pool->used_map);
   size_t i;
-  char *s = pool == user_pool ? "user" : "kernel";
+  char *s = (pool == user_pool) ? "user" : "kernel";
 
   printf("The %s pool consists of %d pages.\n", s, size);
   
