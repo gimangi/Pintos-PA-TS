@@ -281,7 +281,6 @@ thread_unblock (struct thread *t)
   list_push_back (thread_get_queue(t->priority), &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
-
 }
 
 static void
@@ -356,6 +355,8 @@ struct thread *
 thread_current (void) 
 {
   struct thread *t = running_thread ();
+  if (t == idle_thread)
+    printf("[debug] current thread is idle thread!!");
   
   /* Make sure T is really a thread.
      If either of these assertions fire, then your thread may
@@ -490,7 +491,6 @@ static void
 idle (void *idle_started_ UNUSED) 
 {
   struct semaphore *idle_started = idle_started_;
-  
   idle_thread = thread_current ();
   sema_up (idle_started);
 
