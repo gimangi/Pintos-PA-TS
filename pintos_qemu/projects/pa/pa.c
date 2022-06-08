@@ -12,15 +12,14 @@ void print_alloc_pages(int pages) {
     printf("allocate %d pages.\n", pages);
 }
 
-void print_free_pages() {
-    printf("free pages.\n");
+void print_free_pages(int pages) {
+    printf("free %d pages.\n", pages);
 }
 
 void run_patest(char **argv)
 {   
 
     // user pool test
-
     palloc_get_status(PAL_USER);
 
     void * p1 = palloc_get_multiple(PAL_USER, 15);
@@ -34,7 +33,7 @@ void run_patest(char **argv)
     palloc_get_status(PAL_USER);
 
     palloc_free_multiple(p1, 15);
-    print_free_pages();
+    print_free_pages(15);
     
 
     palloc_get_status(PAL_USER);
@@ -48,6 +47,17 @@ void run_patest(char **argv)
     print_alloc_pages(40);
 
     palloc_get_status(PAL_USER);
+
+    void *p2 = palloc_get_multiple(PAL_USER, 64);
+    print_alloc_pages(64);
+
+    palloc_get_status(PAL_USER);
+
+    palloc_free_multiple(p2, 64);
+    print_free_pages(64);
+
+    palloc_get_status(PAL_USER);
+
 
     // kernel pool test
     palloc_get_status(0);
