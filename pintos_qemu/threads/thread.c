@@ -22,7 +22,11 @@
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
-static struct list ready_list;
+//static struct list ready_list;
+static struct list feedback_queue_0;
+static struct list feedback_queue_1;
+static struct list feedback_queue_2;
+static struct list feedback_queue_3;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
@@ -55,7 +59,14 @@ static long long kernel_ticks;  /* # of timer ticks in kernel threads. */
 static long long user_ticks;    /* # of timer ticks in user programs. */
 
 /* Scheduling. */
-#define TIME_SLICE 4            /* # of timer ticks to give each thread. */
+//#define TIME_SLICE 4            /* # of timer ticks to give each thread. */
+#define TIME_SLICE_FQ0 4
+#define TIME_SLICE_FQ1 5
+#define TIME_SLICE_FQ2 6
+#define TIME_SLICE_FQ3 7
+
+#define AGE_MAX 20
+
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 /* If false (default), use round-robin scheduler.
@@ -74,6 +85,13 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
+
+/* mfq functions
+*/
+static unsigned int thread_time_slice(int priority);
+static struct list *thread_get_queue(int priority);
+static int thread_next_priority(struct thread *);
+static void thread_aging();
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -94,7 +112,10 @@ thread_init (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   lock_init (&tid_lock);
-  list_init (&ready_list);
+  list_init (&feedback_queue_0);
+  list_init (&feedback_queue_1);
+  list_init (&feedback_queue_2);
+  list_init (&feedback_queue_3);
   list_init (&all_list);
   list_init (&sleep_list);
 
@@ -140,8 +161,17 @@ thread_tick (void)
     kernel_ticks++;
 
   /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
+  if (++thread_ticks >= thread_time_slice(t->priority)) {
+
+    // get next priority
+    t->priority = (t->priority < 3) ? t->priority + 1 : 3;
+
+    struct list* queue = thread_get_queue(t->priority);
+    list_push_back(queue, &t->elem);
+
     intr_yield_on_return ();
+  }
+
 }
 
 /* Prints thread statistics. */
@@ -222,7 +252,10 @@ thread_block (void)
   ASSERT (!intr_context ());
   ASSERT (intr_get_level () == INTR_OFF);
 
-  thread_current ()->status = THREAD_BLOCKED;
+  struct thread *t = thread_current();
+  t->priority = (t->priority > 0) ? t->priority - 1 : 0;
+
+  t->status = THREAD_BLOCKED;
   schedule ();
 }
 
@@ -243,7 +276,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_push_back (thread_get_queue(t->priority), &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -372,8 +405,9 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+  if (cur != idle_thread)
+    list_push_back (thread_next_queue(cur), &cur->elem);
+
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -555,10 +589,15 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
-  if (list_empty (&ready_list))
-    return idle_thread;
-  else
-    return list_entry (list_pop_front (&ready_list), struct thread, elem);
+  if (!list_empty (&feedback_queue_0))
+    return list_entry (list_pop_front (&feedback_queue_0), struct thread, elem);
+  if (!list_empty (&feedback_queue_1))
+    return list_entry (list_pop_front (&feedback_queue_1), struct thread, elem);
+  if (!list_empty (&feedback_queue_2))
+    return list_entry (list_pop_front (&feedback_queue_2), struct thread, elem);
+  if (!list_empty (&feedback_queue_3))
+    return list_entry (list_pop_front (&feedback_queue_3), struct thread, elem);
+  return idle_thread;
 }
 
 /* Completes a thread switch by activating the new thread's page
@@ -647,3 +686,65 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+
+/*  mfq scheduling functions
+*/
+static unsigned int thread_time_slice(int priority) {
+  ASSERT(0 <= priority && priority <=3);
+
+  switch (priority) {
+    case 0:
+      return TIME_SLICE_FQ0;
+    case 1:
+      return TIME_SLICE_FQ1;
+    case 2:
+      return TIME_SLICE_FQ2;
+    case 3:
+      return TIME_SLICE_FQ3;
+  }
+}
+
+static struct list *thread_get_queue(int priority) {
+ASSERT(0 <= priority && priority <=3);
+
+  switch (priority) {
+    case 0:
+      return &feedback_queue_0;
+    case 1:
+      return &feedback_queue_1;
+    case 2:
+      return &feedback_queue_2;
+    case 3:
+      return &feedback_queue_3;
+  }
+
+}
+
+static int thread_next_priority(struct thread *t) {
+  int cur = t->priority;
+  if (cur != 0)
+    cur -= 1;
+  return cur;
+}
+
+static void thread_aging_util(struct list* list) {
+  struct list_elem *iter;
+  struct thread *t;
+
+  for (iter = list_begin(list); iter != list_end(list);) {
+    t = list_entry(iter, struct thread, elem);
+    t->age += 1;
+    if (t->age >= 20) {
+      t->priority = (t->priority > 0) ? t->priority - 1 : 0;
+      t->age = 0;
+    }
+  }
+}
+
+static void thread_aging() {
+  thread_aging_util(&feedback_queue_0);
+  thread_aging_util(&feedback_queue_1);
+  thread_aging_util(&feedback_queue_2);
+  thread_aging_util(&feedback_queue_3);
+}

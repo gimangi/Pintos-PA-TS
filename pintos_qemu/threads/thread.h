@@ -103,6 +103,8 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    unsigned int age;
   };
 
 /* If false (default), use round-robin scheduler.
