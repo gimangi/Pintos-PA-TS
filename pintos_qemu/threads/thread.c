@@ -356,7 +356,7 @@ struct thread *
 thread_current (void) 
 {
   struct thread *t = running_thread ();
-  printf("debug cur thread : %s", t->name);
+  
   /* Make sure T is really a thread.
      If either of these assertions fire, then your thread may
      have overflowed its stack.  Each thread has less than 4 kB
