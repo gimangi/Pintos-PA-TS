@@ -178,7 +178,7 @@ thread_create (const char *name, int priority,
   tid_t tid;
 
   ASSERT (function != NULL);
-printf("1 %s", name);
+//printf("1 %s", name);
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
   printf("1-1 ");
