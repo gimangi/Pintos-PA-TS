@@ -59,10 +59,13 @@ void run_mfqtest(char **argv)
 	}
     intr_set_level (old_level);
     
-    while (end_count != cnt) {}
-    thread_exit();
     while (1) {
-        timer_msleep(1000);
+        if (end_count == cnt)
+            timer_msleep(100000);
     }
+    // thread_exit();
+    // while (1) {
+    //     timer_msleep(1000);
+    // }
 
 }
