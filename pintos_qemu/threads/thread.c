@@ -740,14 +740,14 @@ static void thread_aging_util(struct list* list) {
   struct list_elem *iter;
   struct thread *t;
 
-  for (iter = list_begin(list); iter != list_end(list); iter = list_next(iter)) {
+  for (iter = list_begin(list); iter != list_end(list);) {
     t = list_entry(iter, struct thread, elem);
     t->age += 1;
 
     if (t->age >= AGE_MAX) {
       /* remove from current queue */
       struct list *cur_queue = thread_get_queue(t->priority);
-      list_remove(&t->elem);
+      iter = list_remove(&t->elem);
       // prevent circular list
       // if (list_size(cur_queue) == 0)
       //   list_begin(cur_queue)->next = NULL;
@@ -757,6 +757,8 @@ static void thread_aging_util(struct list* list) {
       list_push_back(thread_get_queue(t->priority), &t->elem);
       t->age = 0;
     }
+    else
+      iter = list_next(iter);
   }
 }
 
