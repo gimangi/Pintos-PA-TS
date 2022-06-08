@@ -163,11 +163,10 @@ thread_tick (void)
 
 
   /* Enforce preemption. */
-  if (++thread_ticks >= thread_time_slice(t->priority)) {
-    print_all_queue();
+  if (++thread_ticks >= thread_time_slice(t->priority)) 
     intr_yield_on_return ();
-  }
-  
+
+
     /* aging */
   thread_aging(t->priority);
 }
@@ -657,7 +656,7 @@ thread_schedule_tail (struct thread *prev)
       ASSERT (prev != cur);
       palloc_free_page (prev);
     }
-
+  print_all_queue();
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
