@@ -771,15 +771,21 @@ static void print_queue(const char *name, struct list *q) {
 
   printf("-------------- %s's status ---------------\n", name);
   if (list_empty(q)) {
-    printf("queue is empty\n");
+    printf("| queue is empty\n");
     return;
   }
 
   for (iter = list_begin(q); iter != list_end(q); iter = list_next(iter)) {
     t = list_entry (iter, struct thread, elem);
+
+    bool f = ++line_count % 2 == 0;
+
+    if (!f)
+      printf("| ");
+
     printf("thread (name = %s, age = %d)", t->name, t->age);
-    if (++line_count % 2 == 0)
-      printf("\n");
+    if (f)
+      printf("\t|\n");
     else
       printf(", ");
   }
@@ -788,10 +794,10 @@ static void print_queue(const char *name, struct list *q) {
 }
 
 static void print_all_queue() {
-  printf("=========== print all feeedback queue. (tick = %d) ==============", kernel_ticks);
-  print_queue("feedback queue 0", &feedback_queue_0);
-  print_queue("feedback queue 1", &feedback_queue_1);
-  print_queue("feedback queue 2", &feedback_queue_2);
-  print_queue("feedback queue 3", &feedback_queue_3);
+  printf("=========== print all feeedback queue. (tick = %d) ==============\n", kernel_ticks);
+  print_queue("|\t\tfeedback queue 0\t\t|", &feedback_queue_0);
+  print_queue("|\t\tfeedback queue 1\t\t|", &feedback_queue_1);
+  print_queue("|\t\tfeedback queue 2\t\t|", &feedback_queue_2);
+  print_queue("|\t\tfeedback queue 3\t\t|", &feedback_queue_3);
   printf("=================================================================\n");
 }
