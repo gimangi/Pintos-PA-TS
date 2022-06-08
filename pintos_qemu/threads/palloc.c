@@ -210,7 +210,7 @@ palloc_get_status (enum palloc_flags flags)
   size_t i;
   char *s = (pool == &user_pool) ? "user" : "kernel";
 
-  printf("================< The %s pool consists of %d pages. >================\n", s, size);
+  printf("---------- The %s pool consists of %d pages. ----------\n", s, size);
   printf("%d%16d%16d%16d%16d\n",0,8,16,24,32);
   
   for (i = 0; i < size; i++) {

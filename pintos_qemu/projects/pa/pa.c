@@ -9,13 +9,11 @@
 #include "projects/pa/pa.h"
 
 void print_user_pool_page() {
-    printf("----------------------- user pool pages -----------------------\n");
     palloc_get_status(PAL_USER);
     printf("\n");
 }
 
 void print_kernel_pool_page() {
-    printf("----------------------- kernel pool pages --------------------\n");
     palloc_get_status(0);
     printf("\n");
 }
@@ -46,7 +44,8 @@ void run_patest(char **argv)
     print_user_pool_page();
 
     palloc_free_multiple(p1, 15);
-    print_free_pages();    
+    print_free_pages();
+    
 
     print_user_pool_page();
 
