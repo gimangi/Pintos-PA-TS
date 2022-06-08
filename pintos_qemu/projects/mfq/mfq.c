@@ -57,6 +57,6 @@ void run_mfqtest(char **argv)
     intr_set_level (old_level);
     
     while (1) {
-        timer_msleep(1000);
+        //timer_msleep(1000);
     }
 }
