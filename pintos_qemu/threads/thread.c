@@ -91,6 +91,8 @@ static tid_t allocate_tid (void);
 static unsigned int thread_time_slice(int priority);
 static struct list *thread_get_queue(int priority);
 static void thread_aging(int cur_priority);
+static void print_queue(const char *, struct list*);
+static void print_all_queue();
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
