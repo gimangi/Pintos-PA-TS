@@ -278,6 +278,7 @@ thread_unblock (struct thread *t)
   list_push_back (thread_get_queue(t->priority), &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
+
 }
 
 static void
@@ -316,7 +317,6 @@ thread_sleep (int64_t tick)
 void
 thread_wakeup (int64_t current_tick)
 {
-  printf("%d ticks.\n", current_tick);
 
   struct list_elem *e;
 
@@ -730,6 +730,7 @@ static void thread_aging_util(struct list* list) {
   for (iter = list_begin(list); iter != list_end(list);) {
     t = list_entry(iter, struct thread, elem);
     t->age += 1;
+    printf("thread %s aged. age = %d", t->name, t->age);
     if (t->age >= 20) {
       t->priority = (t->priority > 0) ? t->priority - 1 : 0;
       t->age = 0;
