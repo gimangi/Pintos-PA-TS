@@ -57,7 +57,7 @@ void run_mfqtest(char **argv)
         thread_create(name, priority, test_loop, NULL);
 
 		cnt++;
-        prnitf("cnt = %d\n", cnt);
+        printf("cnt = %d\n", cnt);
 	}
     intr_set_level (old_level);
     
