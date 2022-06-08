@@ -769,9 +769,9 @@ static void print_queue(const char *name, struct list *q) {
   struct thread *t;
   int line_count = 0;
 
-  printf("-------------- %s's status ---------------\n", name);
+  printf("| -------------- %s's status --------------- |\n", name);
   if (list_empty(q)) {
-    printf("| queue is empty\n");
+    printf("| queue is empty                             |\n");
     return;
   }
 
@@ -795,9 +795,9 @@ static void print_queue(const char *name, struct list *q) {
 
 static void print_all_queue() {
   printf("=========== print all feeedback queue. (tick = %d) ==============\n", kernel_ticks);
-  print_queue("|\t\tfeedback queue 0\t\t|", &feedback_queue_0);
-  print_queue("|\t\tfeedback queue 1\t\t|", &feedback_queue_1);
-  print_queue("|\t\tfeedback queue 2\t\t|", &feedback_queue_2);
-  print_queue("|\t\tfeedback queue 3\t\t|", &feedback_queue_3);
+  print_queue("feedback queue 0", &feedback_queue_0);
+  print_queue("feedback queue 1", &feedback_queue_1);
+  print_queue("feedback queue 2", &feedback_queue_2);
+  print_queue("feedback queue 3", &feedback_queue_3);
   printf("=================================================================\n");
 }
