@@ -594,15 +594,17 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void) 
 {
+  struct thread *t = idle_thread;
   if (!list_empty (&feedback_queue_0))
-    return list_entry (list_pop_front (&feedback_queue_0), struct thread, elem);
-  if (!list_empty (&feedback_queue_1))
-    return list_entry (list_pop_front (&feedback_queue_1), struct thread, elem);
-  if (!list_empty (&feedback_queue_2))
-    return list_entry (list_pop_front (&feedback_queue_2), struct thread, elem);
-  if (!list_empty (&feedback_queue_3))
-    return list_entry (list_pop_front (&feedback_queue_3), struct thread, elem);
-  return idle_thread;
+    t = list_entry (list_pop_front (&feedback_queue_0), struct thread, elem);
+  else if (!list_empty (&feedback_queue_1))
+    t = list_entry (list_pop_front (&feedback_queue_1), struct thread, elem);
+  else if (!list_empty (&feedback_queue_2))
+    t = list_entry (list_pop_front (&feedback_queue_2), struct thread, elem);
+  else if (!list_empty (&feedback_queue_3))
+    t = list_entry (list_pop_front (&feedback_queue_3), struct thread, elem);
+  printf("next thread : %s", t->name);
+  return t;
 }
 
 /* Completes a thread switch by activating the new thread's page
