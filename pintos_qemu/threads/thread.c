@@ -181,6 +181,7 @@ thread_create (const char *name, int priority,
 printf("1 %s", name);
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
+  printf("1-1 ");
   if (t == NULL)
     return TID_ERROR;
 
