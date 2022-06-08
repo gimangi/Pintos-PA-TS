@@ -248,11 +248,6 @@ thread_block (void)
 
   struct thread *t = thread_current();
 
-  if (t != idle_thread) {
-    t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
-    list_push_back (thread_get_queue(t->priority), &t->elem);
-  }
-  
   t->status = THREAD_BLOCKED;
   schedule ();
 }
@@ -627,6 +622,10 @@ thread_schedule_tail (struct thread *prev)
   struct thread *cur = running_thread ();
   
   ASSERT (intr_get_level () == INTR_OFF);
+
+  /* prev thread move to higher priority queue */
+  prev->priority = (prev->priority > PRI_MIN) ? prev->priority - 1 : PRI_MIN;
+  list_push_back (thread_get_queue(prev->priority), &prev->elem);  
 
   /* Mark us as running. */
   cur->status = THREAD_RUNNING;
