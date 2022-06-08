@@ -745,8 +745,15 @@ static void thread_aging_util(struct list* list) {
     t->age += 1;
 
     if (t->age >= AGE_MAX) {
+      /* remove from current queue */
+      struct list *cur_queue = thread_get_queue(thread_get_queue(t->priority));
+      list_remove(&t->elem);
+      // prevent circular list
+      if (list_size(cur_queue) < 2)
+        list_begin(cur_queue)->next = NULL;
+
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
-      list_remove(&t->allelem);
+      
       list_push_back(thread_get_queue(t->priority), &t->elem);
       t->age = 0;
     }
