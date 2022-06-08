@@ -59,9 +59,9 @@ void run_mfqtest(char **argv)
 	}
     intr_set_level (old_level);
     
-    while (1) {
+    while (1) {pritnf("total created thread : %d, completed thread : %d\n", end_count, cnt);
         if (end_count == cnt) {
-            pritnf("total created thread : %d, completed thread : %d\n", end_count, cnt);
+            
             timer_msleep(100);
         }
     }
