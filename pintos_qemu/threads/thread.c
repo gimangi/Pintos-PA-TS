@@ -148,6 +148,7 @@ void
 thread_tick (void) 
 {
   struct thread *t = thread_current ();
+  printf("[debug] cur thread : %s", t->name);
 
   /* Update statistics. */
   if (t == idle_thread)
@@ -306,6 +307,7 @@ thread_sleep (int64_t tick)
 
   old_level = intr_disable ();
   cur = thread_current ();
+  printf("[debug] cur thread : %s", cur->name);
 
   ASSERT (cur != idle_thread);
 
@@ -402,6 +404,7 @@ void
 thread_yield (void) 
 {
   struct thread *cur = thread_current ();
+  printf("[debug] cur thread : %s", cur->name);
   enum intr_level old_level;
   
   ASSERT (!intr_context ());
