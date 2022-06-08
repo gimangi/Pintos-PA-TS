@@ -164,12 +164,8 @@ thread_tick (void)
 
   /* Enforce preemption. */
   if (++thread_ticks >= thread_time_slice(t->priority)) {
-
     // get next priority
     t->priority = (t->priority < 3) ? t->priority + 1 : 3;
-
-    struct list* queue = thread_get_queue(t->priority);
-    list_push_back(queue, &t->elem);
 
     intr_yield_on_return ();
   }
@@ -410,8 +406,9 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread)
+  if (cur != idle_thread) 
     list_push_back (thread_get_queue(cur->priority), &cur->elem);
+  
 
   cur->status = THREAD_READY;
   schedule ();
