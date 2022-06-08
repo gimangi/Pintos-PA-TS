@@ -161,15 +161,15 @@ thread_tick (void)
   else
     kernel_ticks++;
 
-  
+  /* aging */
+  thread_aging(t->priority);
+
   /* Enforce preemption. */
   if (++thread_ticks >= thread_time_slice(t->priority)) {
     print_all_queue();
     intr_yield_on_return ();
   }
-  /* aging */
-  thread_aging(t->priority);
-
+  
 }
 
 /* Prints thread statistics. */
@@ -749,6 +749,7 @@ static void thread_aging_util(struct list* list) {
     if (t->age >= AGE_MAX) {
       /* remove from current queue */
       iter = list_remove(&t->elem);
+      printf("removed %s", t->name);
 
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       
