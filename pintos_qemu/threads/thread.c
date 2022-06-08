@@ -768,16 +768,16 @@ static void print_queue(const char *name, struct list *q) {
   struct list_elem *iter;
   struct thread *t;
 
-  printf("\t%s's status\n", name);
+  printf(" <%s's status>\n", name);
   if (list_empty(q)) {
-    printf("└ queue is empty\n");
+    printf("\t└ queue is empty\n");
     return;
   }
 
   for (iter = list_begin(q); iter != list_end(q); iter = list_next(iter)) {
     t = list_entry (iter, struct thread, elem);
 
-    printf("└thread (name = %s, age = %d)\n", t->name, t->age);
+    printf("\t└thread (name = %s, age = %d)\n", t->name, t->age);
   }
 
   printf("\n");
