@@ -90,7 +90,6 @@ static tid_t allocate_tid (void);
 */
 static unsigned int thread_time_slice(int priority);
 static struct list *thread_get_queue(int priority);
-static int thread_next_priority(struct thread *);
 static void thread_aging();
 
 /* Initializes the threading system by transforming the code
@@ -406,7 +405,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread)
-    list_push_back (thread_next_queue(cur), &cur->elem);
+    list_push_back (thread_get_queue(cur->priority), &cur->elem);
 
   cur->status = THREAD_READY;
   schedule ();
@@ -719,13 +718,6 @@ ASSERT(0 <= priority && priority <=3);
       return &feedback_queue_3;
   }
 
-}
-
-static int thread_next_priority(struct thread *t) {
-  int cur = t->priority;
-  if (cur != 0)
-    cur -= 1;
-  return cur;
 }
 
 static void thread_aging_util(struct list* list) {
