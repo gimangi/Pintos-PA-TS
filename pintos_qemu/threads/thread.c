@@ -269,6 +269,11 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
+
+
+  /* prev thread move to higher priority queue */
+  t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
+
   list_push_back (thread_get_queue(t->priority), &t->elem);
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -646,9 +651,6 @@ thread_schedule_tail (struct thread *prev)
       palloc_free_page (prev);
     }
 
-  /* prev thread move to higher priority queue */
-  prev->priority = (prev->priority > PRI_MIN) ? prev->priority - 1 : PRI_MIN;
-  list_push_back (thread_get_queue(prev->priority), &prev->elem);  
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
