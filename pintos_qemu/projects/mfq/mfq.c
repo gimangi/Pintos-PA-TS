@@ -61,7 +61,7 @@ void run_mfqtest(char **argv)
     
     while (1) {
         if (end_count == cnt) {
-            for (int i = 0; i < 1000000; i++) {}
+            for (int i = 0; i < 100000; i++) {}
             break;
         }
     }
