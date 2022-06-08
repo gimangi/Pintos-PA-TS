@@ -21,11 +21,7 @@ void test_loop(void *aux)
 
     while (1) {
         a = (a + 1) % RANGE;
-        if (a == 0) {
-            printf("Thread %d: a test_cycle has completed.\n", id);
-            timer_msleep(1000);
-        }
-
+        if (a == 0) break;
     }
 }
 

@@ -788,10 +788,10 @@ static void print_queue(const char *name, struct list *q) {
 }
 
 static void print_all_queue() {
-  printf("\t\tprint all feeedback queue. tick = %d\n", kernel_ticks);
+  printf("=========== print all feeedback queue. (tick = %d) ==============", kernel_ticks);
   print_queue("feedback queue 0", &feedback_queue_0);
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
   print_queue("feedback queue 3", &feedback_queue_3);
-  printf("\n");
+  printf("=================================================================\n");
 }
