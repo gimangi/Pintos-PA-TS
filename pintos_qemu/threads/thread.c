@@ -171,6 +171,9 @@ thread_tick (void)
     intr_yield_on_return ();
   }
 
+  /* aging */
+  thread_aging();
+
 }
 
 /* Prints thread statistics. */
