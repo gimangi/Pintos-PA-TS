@@ -351,10 +351,10 @@ struct thread *
 thread_current (void) 
 {
   struct thread *t = running_thread ();
-  if (t == idle_thread)
-    printf("[debug] current thread is idle thread!!");
-  else
-    printf("[debug] current thread is %s", t->name);
+  // if (t == idle_thread)
+  //   printf("[debug] current thread is idle thread!!");
+  // else
+  //   printf("[debug] current thread is %s", t->name);
   
   /* Make sure T is really a thread.
      If either of these assertions fire, then your thread may
