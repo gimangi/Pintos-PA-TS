@@ -8,6 +8,7 @@
 /* States in a thread's life cycle. */
 enum thread_status
   {
+    THREAD_NEW,         /* Created new thread. */
     THREAD_RUNNING,     /* Running thread. */
     THREAD_READY,       /* Not running but ready to run. */
     THREAD_BLOCKED,     /* Waiting for an event to trigger. */

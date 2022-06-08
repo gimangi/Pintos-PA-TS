@@ -272,11 +272,11 @@ thread_unblock (struct thread *t)
   ASSERT (is_thread (t));
 
   old_level = intr_disable ();
-  ASSERT (t->status == THREAD_BLOCKED);
-
+  ASSERT (t->status == THREAD_BLOCKED || t->status == THREAD_NEW);
 
   /* prev thread move to higher priority queue */
-  t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
+  if (t->status != THREAD_NEW)
+    t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
 
   list_push_back (thread_get_queue(t->priority), &t->elem);
   t->status = THREAD_READY;
