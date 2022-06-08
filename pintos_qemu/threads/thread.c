@@ -749,8 +749,8 @@ static void thread_aging_util(struct list* list) {
       struct list *cur_queue = thread_get_queue(t->priority);
       list_remove(&t->elem);
       // prevent circular list
-      if (list_size(cur_queue) == 0)
-        list_begin(cur_queue)->next = NULL;
+      // if (list_size(cur_queue) == 0)
+      //   list_begin(cur_queue)->next = NULL;
 
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       
