@@ -133,7 +133,7 @@ thread_start (void)
   /* Create the idle thread. */
   struct semaphore idle_started;
   sema_init (&idle_started, 0);
-  thread_create ("idle", PRI_MIN, idle, &idle_started);
+  thread_create ("idle", PRI_MAX, idle, &idle_started);
 
   /* Start preemptive thread scheduling. */
   intr_enable ();
@@ -247,7 +247,7 @@ thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   struct thread *t = thread_current();
-  t->priority = (t->priority > 0) ? t->priority - 1 : 0;
+  //t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
 
   t->status = THREAD_BLOCKED;
   schedule ();
@@ -400,7 +400,7 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread) {
     // get next priority
-    cur->priority = (cur->priority < 3) ? cur->priority + 1 : 3;
+    cur->priority = (cur->priority < PRI_MAX) ? cur->priority + 1 : PRI_MAX;
 
     list_push_back (thread_get_queue(cur->priority), &cur->elem);
   }
@@ -558,6 +558,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
+  t->age = 0;
 
   t->priority = priority;
   t->magic = THREAD_MAGIC;
@@ -597,7 +598,6 @@ next_thread_to_run (void)
     t = list_entry (list_pop_front (&feedback_queue_2), struct thread, elem);
   else if (!list_empty (&feedback_queue_3))
     t = list_entry (list_pop_front (&feedback_queue_3), struct thread, elem);
-  printf("next thread : %s", t->name);
   return t;
 }
 
@@ -626,7 +626,8 @@ thread_schedule_tail (struct thread *prev)
 
   /* Mark us as running. */
   cur->status = THREAD_RUNNING;
-
+  
+  cur->age = 0;
   /* Start new time slice. */
   thread_ticks = 0;
 
@@ -734,8 +735,8 @@ static void thread_aging_util(struct list* list) {
     t = list_entry(iter, struct thread, elem);
     t->age += 1;
 
-    if (t->age >= 20) {
-      t->priority = (t->priority > 0) ? t->priority - 1 : 0;
+    if (t->age >= AGE_MAX) {
+      t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       t->age = 0;
     }
   }
