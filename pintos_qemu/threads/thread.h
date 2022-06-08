@@ -21,8 +21,8 @@ typedef int tid_t;
 
 /* Thread priorities. */
 #define PRI_MIN 0                       /* Lowest priority. */
-#define PRI_DEFAULT 31                  /* Default priority. */
-#define PRI_MAX 63                      /* Highest priority. */
+#define PRI_DEFAULT 1                  /* Default priority. */
+#define PRI_MAX 3                      /* Highest priority. */
 
 /* A kernel thread or user process.
 

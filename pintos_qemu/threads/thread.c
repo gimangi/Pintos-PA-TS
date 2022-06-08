@@ -563,8 +563,6 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
 
-  if (!(0 <= priority && priority <= 3))
-    priority = 0;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
 
@@ -695,10 +693,10 @@ allocate_tid (void)
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
 
 
-/*  mfq scheduling functions
+/*  time slice by priority
 */
 static unsigned int thread_time_slice(int priority) {
-  ASSERT(0 <= priority && priority <=3);
+  ASSERT(PRI_MIN <= priority && priority <= PRI_MAX);
 
   switch (priority) {
     case 0:
@@ -712,8 +710,10 @@ static unsigned int thread_time_slice(int priority) {
   }
 }
 
+/*  Feedback queue corresponding to priority
+*/
 static struct list *thread_get_queue(int priority) {
-ASSERT(0 <= priority && priority <=3);
+ASSERT(PRI_MIN <= priority && priority <= PRI_MAX);
 
   switch (priority) {
     case 0:
@@ -728,6 +728,8 @@ ASSERT(0 <= priority && priority <=3);
 
 }
 
+/*  All threads in the feedback queue will be aged.
+*/
 static void thread_aging_util(struct list* list) {
   struct list_elem *iter;
   struct thread *t;
@@ -743,6 +745,8 @@ static void thread_aging_util(struct list* list) {
   }
 }
 
+/*  Execute aging on feedback queues lower than the current priority.
+*/
 static void thread_aging(int cur_priority) {
   switch (cur_priority) {
     case 0:
