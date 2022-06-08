@@ -746,8 +746,8 @@ static void thread_aging_util(struct list* list) {
 
     if (t->age >= AGE_MAX) {
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
-      list_push_back(thread_get_queue(t->priority), &t->elem);
       list_remove(&t->elem);
+      list_push_back(thread_get_queue(t->priority), &t->elem);
       t->age = 0;
     }
   }
