@@ -178,17 +178,17 @@ thread_create (const char *name, int priority,
   tid_t tid;
 
   ASSERT (function != NULL);
-//printf("1 %s", name);
+
   /* Allocate thread. */
   t = palloc_get_page (PAL_ZERO);
-  printf("1-1 ");
+  
   if (t == NULL)
     return TID_ERROR;
 
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
-printf("2 ");
+
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
   kf->eip = NULL;
@@ -198,7 +198,7 @@ printf("2 ");
   /* Stack frame for switch_entry(). */
   ef = alloc_frame (t, sizeof *ef);
   ef->eip = (void (*) (void)) kernel_thread;
-printf("3 ");
+
   /* Stack frame for switch_threads(). */
   sf = alloc_frame (t, sizeof *sf);
   sf->eip = switch_entry;

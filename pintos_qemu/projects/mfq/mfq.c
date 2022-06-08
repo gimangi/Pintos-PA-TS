@@ -25,7 +25,7 @@ void test_loop(void *aux)
         
         unsigned long long sq = (unsigned long long) a * a;
         if (sq < range)
-            printf("%d find num : %d", id, a);
+            printf("%d:%d ", id, sq);
 
     }
 }
