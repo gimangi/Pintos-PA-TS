@@ -748,7 +748,7 @@ static void thread_aging_util(struct list* list) {
 
     if (t->age >= AGE_MAX) {
       /* remove from current queue */
-      //iter = list_remove(&t->elem);
+      iter = list_remove(&t->elem);
 
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       
@@ -794,7 +794,7 @@ static void print_queue(const char *name, struct list *q) {
 static void print_all_queue() {
   struct thread *t = thread_current();
   printf("\n================ print all feeedback queue. ===================\n", kernel_ticks);
-  printf("current thread : (name = %s, priority = %d), current tick = %d\n\n", t->name, t->priority, kernel_ticks);
+  printf("current thread : (name = %s, priority = %d), current tick = %d, age = %d\n\n", t->name, t->priority, kernel_ticks, t->age);
   print_queue("feedback queue 0", &feedback_queue_0);
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
