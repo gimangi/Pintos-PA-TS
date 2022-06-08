@@ -674,6 +674,9 @@ schedule (void)
   if (cur != next)
     prev = switch_threads (cur, next);
   thread_schedule_tail (prev);
+
+  printf("schedue completed.\n");
+  print_all_queue();
 }
 
 /* Returns a tid to use for a new thread. */
@@ -736,7 +739,7 @@ static void thread_aging_util(struct list* list) {
   struct list_elem *iter;
   struct thread *t;
 
-  for (iter = list_begin(list); iter != list_end(list);) {
+  for (iter = list_begin(list); iter != list_end(list); iter = list_next(iter)) {
     t = list_entry(iter, struct thread, elem);
     t->age += 1;
 
@@ -758,4 +761,34 @@ static void thread_aging(int cur_priority) {
     case 2:
       thread_aging_util(&feedback_queue_3);
   }
+}
+
+static void print_queue(const char *name, struct list *q) {
+  struct list_elem *iter;
+  struct thread *t;
+  int line_count = 0;
+
+  printf("-------------- %s's status ---------------\n", name);
+  if (list_empty(q)) {
+    printf("queue is empty");
+    return;
+  }
+
+  for (iter = list_begin(q); iter != list_end(q); iter = list_next(iter)) {
+    t = list_entry (iter, struct thread, elem);
+    printf("thread (name = %s, age = %d)", t->name, t->age);
+    if (++line_count % 2 == 0)
+      printf("\n");
+    else
+      printf(", ");
+  }
+
+  printf("\n");
+}
+
+static void print_all_queue() {
+  print_queue("feedback queue 0", &feedback_queue_0);
+  print_queue("feedback queue 1", &feedback_queue_1);
+  print_queue("feedback queue 2", &feedback_queue_2);
+  print_queue("feedback queue 3", &feedback_queue_3);
 }
