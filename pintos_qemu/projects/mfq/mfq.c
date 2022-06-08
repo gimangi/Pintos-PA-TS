@@ -55,7 +55,7 @@ void run_mfqtest(char **argv)
 
         // you can create threads here 
         //thread_create(name, priority, test_loop, NULL);
-        thread_create(name, PRIO_USER, test_loop, NULL);
+        thread_create(name, 2, test_loop, NULL);
 
 		cnt++;
 	}
