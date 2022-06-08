@@ -90,7 +90,7 @@ static tid_t allocate_tid (void);
 */
 static unsigned int thread_time_slice(int priority);
 static struct list *thread_get_queue(int priority);
-static void thread_aging();
+static void thread_aging(int cur_priority);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -159,6 +159,9 @@ thread_tick (void)
   else
     kernel_ticks++;
 
+  /* aging */
+  thread_aging(t->priority);
+
   /* Enforce preemption. */
   if (++thread_ticks >= thread_time_slice(t->priority)) {
 
@@ -170,9 +173,6 @@ thread_tick (void)
 
     intr_yield_on_return ();
   }
-
-  /* aging */
-  thread_aging();
 
 }
 
@@ -743,9 +743,13 @@ static void thread_aging_util(struct list* list) {
   }
 }
 
-static void thread_aging() {
-  thread_aging_util(&feedback_queue_0);
-  thread_aging_util(&feedback_queue_1);
-  thread_aging_util(&feedback_queue_2);
-  thread_aging_util(&feedback_queue_3);
+static void thread_aging(int cur_priority) {
+  switch (cur_priority) {
+    case 0:
+      thread_aging_util(&feedback_queue_1);
+    case 1:
+      thread_aging_util(&feedback_queue_2);
+    case 2:
+      thread_aging_util(&feedback_queue_3);
+  }
 }
