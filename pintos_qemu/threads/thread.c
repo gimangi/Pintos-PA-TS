@@ -656,7 +656,9 @@ thread_schedule_tail (struct thread *prev)
       ASSERT (prev != cur);
       palloc_free_page (prev);
     }
-  print_all_queue();
+  
+  if (print_mfq)
+    print_all_queue();
 }
 
 /* Schedules a new process.  At entry, interrupts must be off and
