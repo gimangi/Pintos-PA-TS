@@ -10,18 +10,19 @@
 #include "devices/timer.h"
 #include "projects/mfq/mfq.h"
 
-/* One cycle executes 1 billion loops.
+#define RANGE 1000000000
+
+/* One test_cycle executes 1 billion loops.
 */
 void test_loop(void *aux)
 {
-    static unsigned int range = 1000000000;
     tid_t id = thread_tid();
     unsigned int a = 1;
 
     while (1) {
-        a = (a + 1) % range;
+        a = (a + 1) % RANGE;
         if (a == 0)
-            printf("A cycle completed thread %d", id);
+            printf("Thread %d: a test_cycle has completed.\n", id);
 
     }
 }

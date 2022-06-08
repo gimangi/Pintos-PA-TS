@@ -203,10 +203,10 @@ thread_create (const char *name, int priority,
   sf = alloc_frame (t, sizeof *sf);
   sf->eip = switch_entry;
   sf->ebp = 0;
-printf("thread init %s", name);
+
   /* Add to run queue. */
   thread_unblock (t);
-printf("thread run start %s", name);
+
   return tid;
 }
 
@@ -284,6 +284,8 @@ thread_sleep (int64_t tick)
 void
 thread_wakeup (int64_t current_tick)
 {
+  printf("%d ticks.\n", current_tick);
+
   struct list_elem *e;
 
   next_tick_to_wakeup = INT64_MAX;
