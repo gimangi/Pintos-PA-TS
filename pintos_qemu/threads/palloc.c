@@ -221,6 +221,7 @@ palloc_get_status (enum palloc_flags flags)
       printf("\n");
   }
 
+  printf("\n\n");
 }
 
 size_t next_pow2(size_t num) {
