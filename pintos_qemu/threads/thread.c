@@ -73,7 +73,7 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
-int debug = -1;
+
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -146,8 +146,8 @@ thread_start (void)
    Thus, this function runs in an external interrupt context. */
 void
 thread_tick (void) 
-{debug = 1;
-  printf("debug %d", debug);
+{
+  printf("debug %d", 1);
   struct thread *t = thread_current ();
 
   /* Update statistics. */
@@ -306,7 +306,7 @@ thread_sleep (int64_t tick)
   enum intr_level old_level;
 
   old_level = intr_disable ();
-  debug=2;printf("debug %d", debug);
+  printf("debug %d", 2);
   cur = thread_current ();
 
   ASSERT (cur != idle_thread);
@@ -392,6 +392,7 @@ thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
+  printf("debug %d", 4);
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -403,7 +404,7 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
-  debug=3;printf("debug %d", debug);
+  printf("debug %d", 3);
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
@@ -493,6 +494,7 @@ static void
 idle (void *idle_started_ UNUSED) 
 {
   struct semaphore *idle_started = idle_started_;
+  printf("debug %d", 5);
   idle_thread = thread_current ();
   sema_up (idle_started);
 
