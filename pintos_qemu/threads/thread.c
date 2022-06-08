@@ -772,7 +772,7 @@ static void print_queue(const char *name, struct list *q) {
 
   printf("-------------- %s's status ---------------\n", name);
   if (list_empty(q)) {
-    printf("queue is empty");
+    printf("queue is empty\n");
     return;
   }
 
@@ -793,4 +793,5 @@ static void print_all_queue() {
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
   print_queue("feedback queue 3", &feedback_queue_3);
+  printf("\n");
 }
