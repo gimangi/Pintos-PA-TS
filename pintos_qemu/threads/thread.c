@@ -247,9 +247,12 @@ thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   struct thread *t = thread_current();
-  t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
-  list_push_back (thread_get_queue(t->priority), &t->elem);
 
+  if (t != idle_thread) {
+    t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
+    list_push_back (thread_get_queue(t->priority), &t->elem);
+  }
+  
   t->status = THREAD_BLOCKED;
   schedule ();
 }
