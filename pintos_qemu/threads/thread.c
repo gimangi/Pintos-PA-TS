@@ -780,7 +780,6 @@ static void print_queue(const char *name, struct list *q) {
     printf("\t└thread (name = %s, age = %d)\n", t->name, t->age);
   }
 
-  printf("\n");
 }
 
 static void print_all_queue() {

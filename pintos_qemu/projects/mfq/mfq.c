@@ -10,9 +10,9 @@
 #include "devices/timer.h"
 #include "projects/mfq/mfq.h"
 
-#define RANGE 50000000
+#define RANGE 20000000
 
-/* One test_cycle executes 50 million loops.
+/* One test_cycle executes 20 million loops.
 */
 void test_loop(void *aux)
 {
