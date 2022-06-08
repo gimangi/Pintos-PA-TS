@@ -165,8 +165,10 @@ thread_tick (void)
   thread_aging(t->priority);
 
   /* Enforce preemption. */
-  if (++thread_ticks >= thread_time_slice(t->priority))
+  if (++thread_ticks >= thread_time_slice(t->priority)) {
+    print_all_queue();
     intr_yield_on_return ();
+  }
 
 }
 
@@ -676,9 +678,6 @@ schedule (void)
   if (cur != next)
     prev = switch_threads (cur, next);
   thread_schedule_tail (prev);
-
-  printf("schedue completed.\n");
-  print_all_queue();
 }
 
 /* Returns a tid to use for a new thread. */
@@ -789,6 +788,7 @@ static void print_queue(const char *name, struct list *q) {
 }
 
 static void print_all_queue() {
+  printf("\t\tprint all feeedback queue. tick = %d\n", kernel_ticks);
   print_queue("feedback queue 0", &feedback_queue_0);
   print_queue("feedback queue 1", &feedback_queue_1);
   print_queue("feedback queue 2", &feedback_queue_2);
