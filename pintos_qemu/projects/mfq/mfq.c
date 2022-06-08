@@ -60,10 +60,8 @@ void run_mfqtest(char **argv)
     intr_set_level (old_level);
     
     while (1) {
-        if (end_count == cnt) {
-            for (int i = 0; i < 100000; i++) {}
-            break;
-        }
+        if (end_count == cnt)
+            timer_msleep(100);
     }
-    timer_msleep(1000);
+    
 }
