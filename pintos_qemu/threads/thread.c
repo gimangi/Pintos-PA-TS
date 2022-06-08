@@ -563,7 +563,10 @@ init_thread (struct thread *t, const char *name, int priority)
   ASSERT (name != NULL);
 
   memset (t, 0, sizeof *t);
-  t->status = THREAD_NEW;
+
+  if (t != running_thread())
+    t->status = THREAD_NEW;
+  
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->age = 0;
@@ -749,7 +752,6 @@ static void thread_aging_util(struct list* list) {
     if (t->age >= AGE_MAX) {
       /* remove from current queue */
       iter = list_remove(&t->elem);
-      printf("removed %s", t->name);
 
       t->priority = (t->priority > PRI_MIN) ? t->priority - 1 : PRI_MIN;
       
