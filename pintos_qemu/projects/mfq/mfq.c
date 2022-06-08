@@ -54,8 +54,7 @@ void run_mfqtest(char **argv)
         printf("priority: %d\n", priority);
 
         // you can create threads here 
-        //thread_create(name, priority, test_loop, NULL);
-        thread_create(name, 2, test_loop, NULL);
+        thread_create(name, 31, test_loop, NULL);
 
 		cnt++;
 	}
