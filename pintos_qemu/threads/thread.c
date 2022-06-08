@@ -163,12 +163,8 @@ thread_tick (void)
   thread_aging(t->priority);
 
   /* Enforce preemption. */
-  if (++thread_ticks >= thread_time_slice(t->priority)) {
-    // get next priority
-    t->priority = (t->priority < 3) ? t->priority + 1 : 3;
-
+  if (++thread_ticks >= thread_time_slice(t->priority))
     intr_yield_on_return ();
-  }
 
 }
 
@@ -351,10 +347,6 @@ struct thread *
 thread_current (void) 
 {
   struct thread *t = running_thread ();
-  // if (t == idle_thread)
-  //   printf("[debug] current thread is idle thread!!");
-  // else
-  //   printf("[debug] current thread is %s", t->name);
   
   /* Make sure T is really a thread.
      If either of these assertions fire, then your thread may
@@ -406,8 +398,12 @@ thread_yield (void)
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
-  if (cur != idle_thread) 
+  if (cur != idle_thread) {
+    // get next priority
+    cur->priority = (cur->priority < 3) ? cur->priority + 1 : 3;
+
     list_push_back (thread_get_queue(cur->priority), &cur->elem);
+  }
   
 
   cur->status = THREAD_READY;
