@@ -147,7 +147,6 @@ thread_start (void)
 void
 thread_tick (void) 
 {
-  printf("debug %d", 1);
   struct thread *t = thread_current ();
 
   /* Update statistics. */
@@ -306,7 +305,6 @@ thread_sleep (int64_t tick)
   enum intr_level old_level;
 
   old_level = intr_disable ();
-  printf("debug %d", 2);
   cur = thread_current ();
 
   ASSERT (cur != idle_thread);
@@ -358,7 +356,7 @@ struct thread *
 thread_current (void) 
 {
   struct thread *t = running_thread ();
-  
+  printf("debug cur thread : %s", t->name);
   /* Make sure T is really a thread.
      If either of these assertions fire, then your thread may
      have overflowed its stack.  Each thread has less than 4 kB
@@ -392,7 +390,6 @@ thread_exit (void)
      and schedule another process.  That process will destroy us
      when it calls thread_schedule_tail(). */
   intr_disable ();
-  printf("debug %d", 4);
   list_remove (&thread_current()->allelem);
   thread_current ()->status = THREAD_DYING;
   schedule ();
@@ -404,7 +401,6 @@ thread_exit (void)
 void
 thread_yield (void) 
 {
-  printf("debug %d", 3);
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
@@ -494,7 +490,7 @@ static void
 idle (void *idle_started_ UNUSED) 
 {
   struct semaphore *idle_started = idle_started_;
-  printf("debug %d", 5);
+  
   idle_thread = thread_current ();
   sema_up (idle_started);
 
