@@ -206,9 +206,13 @@ void
 palloc_get_status (enum palloc_flags flags)
 {
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
-
+  size_t size = bitmap_size(pool->used_map);
   size_t i;
-  for (i = 0; i < bitmap_size(pool->used_map); i++) {
+  char *s = pool == user_pool ? "user" : "kernel";
+
+  printf("The %s pool consists of %d pages.\n", s, size);
+  
+  for (i = 0; i < size; i++) {
     printf("%d ", !page_is_empty(pool->used_map, i));
 
     // 32 page status per line
