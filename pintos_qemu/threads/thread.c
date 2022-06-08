@@ -767,22 +767,17 @@ static void thread_aging(int cur_priority) {
 static void print_queue(const char *name, struct list *q) {
   struct list_elem *iter;
   struct thread *t;
-  int line_count = 0;
 
-  printf("-------------- %s's status ---------------\n", name);
+  printf("\t%s's status\n", name);
   if (list_empty(q)) {
-    printf("queue is empty\n");
+    printf("└ queue is empty\n");
     return;
   }
 
   for (iter = list_begin(q); iter != list_end(q); iter = list_next(iter)) {
     t = list_entry (iter, struct thread, elem);
 
-    printf("thread (name = %s, age = %d)", t->name, t->age);
-    if (++line_count % 2 == 0)
-      printf("\n");
-    else
-      printf(", ");
+    printf("└thread (name = %s, age = %d)\n", t->name, t->age);
   }
 
   printf("\n");
