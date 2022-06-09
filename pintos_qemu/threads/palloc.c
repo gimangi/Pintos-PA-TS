@@ -38,8 +38,8 @@ struct pool
 /* Two pools: one for kernel data, one for user pages. */
 static struct pool kernel_pool, user_pool;
 static size_t user_pages, kernel_pages;
-static struct list_elem **kernel_buddy_reserv;
-static struct list_elem **user_buddy_reserv;
+struct list_elem **kernel_buddy_reserv;
+struct list_elem **user_buddy_reserv;
 
 static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
