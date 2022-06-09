@@ -260,7 +260,8 @@ size_t buddy_find(const struct list_elem **list_reserv, const struct bitmap *b, 
   upper = next_pow2(gap);
 
   if ((upper / 2) < page_cnt && page_cnt <= upper) {
-    if (page_is_empty_multiple(b, start, page_cnt) && buddy_not_reserved(list_reserv, start, page_cnt))
+    //&& buddy_not_reserved(list_reserv, start, page_cnt)
+    if (page_is_empty_multiple(b, start, page_cnt) )
       return start;
   }
   else {
