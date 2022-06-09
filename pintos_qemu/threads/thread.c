@@ -806,6 +806,6 @@ static void print_all_queue() {
   printf("=================================================================\n");
 }
 
-static void print_queue_start() {
+void print_queue_start() {
   flag_print_queue = 1;
 }
