@@ -260,7 +260,6 @@ size_t buddy_find(const struct list_elem **list_reserv, const struct bitmap *b, 
   upper = next_pow2(gap);
 
   if ((upper / 2) < page_cnt && page_cnt <= upper) {
-    printf("debug %d", page_cnt);
     if (page_is_empty_multiple(b, start, page_cnt) && buddy_not_reserved(list_reserv, start, page_cnt))
       return start;
   }
@@ -290,7 +289,7 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
   if (find == BUDDY_NOT_FOUND)
     return BITMAP_ERROR;
   bitmap_set_multiple(b, find, page_cnt, !value);
-  buddy_reserve(list_reserv, find, page_cnt);
+  //buddy_reserve(list_reserv, find, page_cnt);
 
   return find;
 }
