@@ -64,8 +64,8 @@ palloc_init (size_t user_page_limit)
     user_pages = user_page_limit;
   kernel_pages = free_pages - user_pages;
 
-  //kernel_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * kernel_pages);
-  //user_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * user_pages);
+  kernel_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * kernel_pages);
+  user_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * user_pages);
   //init_buddy (kernel_buddy_reserv, kernel_pages);
   //init_buddy (user_buddy_reserv, user_pages);
 
