@@ -805,3 +805,7 @@ static void print_all_queue() {
   print_queue("feedback queue 3", &feedback_queue_3);
   printf("=================================================================\n");
 }
+
+static void print_queue_start() {
+  flag_print_queue = 1;
+}
