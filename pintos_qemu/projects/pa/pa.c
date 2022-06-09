@@ -18,7 +18,6 @@ void print_free_pages(int pages) {
 
 void run_patest(char **argv)
 {   
-
     // user pool test
     palloc_get_status(PAL_USER);
 
@@ -27,14 +26,13 @@ void run_patest(char **argv)
 
     palloc_get_status(PAL_USER);
 
-    palloc_get_multiple(PAL_USER, 2);
-    print_alloc_pages(2);
+    palloc_get_multiple(PAL_USER, 1);
+    print_alloc_pages(1);
 
     palloc_get_status(PAL_USER);
 
     palloc_free_multiple(p1, 15);
     print_free_pages(15);
-    
 
     palloc_get_status(PAL_USER);
 
@@ -59,9 +57,7 @@ void run_patest(char **argv)
     // palloc_free_multiple(p2, 65);
     // if it is out of the free range, it will be ASSERT
 
-
     palloc_get_status(PAL_USER);
-
 
     // kernel pool test
     palloc_get_status(0);
