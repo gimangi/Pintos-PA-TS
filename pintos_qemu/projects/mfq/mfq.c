@@ -16,7 +16,6 @@
 */
 void test_loop(void *aux)
 {
-    tid_t id = thread_tid();
     unsigned int a = 1;
 
     while (1) {
@@ -57,7 +56,7 @@ void run_mfqtest(char **argv)
     intr_set_level (old_level);
     
      while (1) {
-         timer_msleep(1000);
+         //timer_msleep(1000);
      }
 
 }
