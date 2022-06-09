@@ -35,6 +35,8 @@ void run_mfqtest(char **argv)
 
     /// TODO: make your own test
 	cnt = 0;
+    flag_print_queue = 1;
+
 	for (token = strtok_r (argv[1], ":", &save_ptr); token != NULL; 
 		token = strtok_r (NULL, ":", &save_ptr)) {
 
