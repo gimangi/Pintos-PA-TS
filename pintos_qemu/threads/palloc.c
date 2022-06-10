@@ -38,7 +38,7 @@ struct pool
 
 /* for buddy system */
 struct balloc_elem {
-  bool alloc;
+  bool reserv;
   struct balloc_elem *next;
   struct balloc_elem *prev;
 };
@@ -299,7 +299,7 @@ static void buddy_reserve (size_t start, size_t cnt) {
 
   // link buddys
   for (i = start; i <= end; i++) {
-    buddy_list[i].alloc = true;
+    buddy_list[i].reserv = true;
 
     if (i < end) {
       buddy_list[i].next = &buddy_list[i+1];
@@ -313,8 +313,9 @@ static bool buddy_not_reserved (const struct bitmap *b, size_t start, size_t cnt
   start = (b == kernel_pool.used_map) ? start : start + kernel_pages - 1;
 
   for (size_t i = start; i < start + cnt; i++) {
-    if (buddy_list[i].alloc)
+    if (buddy_list[i].reserv)
       return false;
+
   }
   return true;
 }
@@ -330,7 +331,7 @@ static void buddy_free (size_t start) {
   struct balloc_elem *prev = NULL;
   // free buddys
   while (iter->next != NULL) {
-    iter->alloc = false;
+    iter->reserv = false;
 
     if (iter->prev != NULL)
       iter->prev->next = NULL;
@@ -341,6 +342,6 @@ static void buddy_free (size_t start) {
 
   // last element
   iter->prev = NULL;
-  iter->alloc = false;
+  iter->reserv = false;
 
 }
