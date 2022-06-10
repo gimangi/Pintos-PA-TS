@@ -152,6 +152,8 @@ palloc_free_multiple (void *pages, size_t page_cnt)
     NOT_REACHED ();
 
   page_idx = pg_no (pages) - pg_no (pool->base);
+  size_t buddy_idx = (pool == &kernel_pool) ? page_idx : page_idx + kernel_pages - 1;
+  buddy_free(buddy_idx);
 
 #ifndef NDEBUG
   memset (pages, 0xcc, PGSIZE * page_cnt);
