@@ -53,7 +53,7 @@ static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
 static bool page_from_pool (const struct pool *, void *page);
 size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value);
-static bool buddy_not_reserved(const struct pool *, size_t start, size_t cnt);
+static bool buddy_not_reserved(const struct bitmap *, size_t start, size_t cnt);
 static void buddy_reserve (size_t start, size_t cnt);
 static void buddy_free (size_t start);
 
@@ -235,17 +235,6 @@ palloc_get_status (enum palloc_flags flags)
   printf("\n\n");
 }
 
-static bool buddy_not_reserved (const struct pool *b, size_t start, size_t cnt) {
-  start = (b == kernel_pool.used_map) ? start : start + kernel_pages;
-  printf("check reserve buddy %d  ~ %ds\n", start, start+cnt) ;
-
-  for (size_t i = start; i < start + cnt; i++) {
-    if (buddy_list[i].alloc)
-      return false;
-  }
-  return true;
-}
-
 size_t next_pow2(size_t num) {
   size_t res = 1;
   while (res < num) res <<= 1;
@@ -316,6 +305,17 @@ static void buddy_reserve (size_t start, size_t cnt) {
     }
 
   }
+}
+
+static bool buddy_not_reserved (const struct bitmap *b, size_t start, size_t cnt) {
+  start = (b == kernel_pool.used_map) ? start : start + kernel_pages;
+  printf("check reserve buddy %d  ~ %ds\n", start, start+cnt) ;
+
+  for (size_t i = start; i < start + cnt; i++) {
+    if (buddy_list[i].alloc)
+      return false;
+  }
+  return true;
 }
 
 static void buddy_free (size_t start) {
