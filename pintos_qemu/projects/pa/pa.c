@@ -56,13 +56,13 @@ void run_patest(char **argv)
 
     palloc_get_status(PAL_USER);
 
-    void *p2 = palloc_get_multiple(PAL_USER, 64);
-    print_alloc_pages(64);
+    void *p2 = palloc_get_multiple(PAL_USER, 100);
+    print_alloc_pages(100);
 
     palloc_get_status(PAL_USER);
 
-    palloc_free_multiple(p2, 64);
-    print_free_pages(64);
+    palloc_free_multiple(p2, 100);
+    print_free_pages(100);
 
     // palloc_free_multiple(p2, 65);
     // if it is out of the free range, it will be ASSERT
