@@ -85,7 +85,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     return NULL;
 
   lock_acquire (&pool->lock);
-  page_idx = bitmap_scan_buddy_and_flip (pool, pool->used_map, page_cnt, false);
+  page_idx = bitmap_scan_buddy_and_flip (pool->used_map, page_cnt, false);
   lock_release (&pool->lock);
 
   if (page_idx != BITMAP_ERROR)
