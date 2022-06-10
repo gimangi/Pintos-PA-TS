@@ -12,7 +12,7 @@
 #include "threads/vaddr.h"
 
 #define BUDDY_NOT_FOUND SIZE_MAX
-#define BUDDY_PAGE_MAX 1024
+#define BUDDY_PAGE_MAX 1024 * 16
 
 /* Page allocator.  Hands out memory in page-size (or
    page-multiple) chunks.  See malloc.h for an allocator that
