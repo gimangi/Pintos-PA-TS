@@ -56,6 +56,7 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
 static bool buddy_not_reserved(const struct bitmap *, size_t start, size_t cnt);
 static void buddy_reserve (size_t start, size_t cnt);
 static void buddy_free (size_t start);
+size_t next_pow2(size_t);
 
 /* Initializes the page allocator.  At most USER_PAGE_LIMIT
    pages are put into the user pool. */
