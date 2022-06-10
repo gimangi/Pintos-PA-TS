@@ -285,7 +285,7 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
   bitmap_set_multiple(b, find, page_cnt, !value);
 
   buddy_start = (pool == &kernel_pool) ? find : find + kernel_pages - 1;
-  buddy_reserve(buddy_start, page_cnt);
+  buddy_reserve(buddy_start, next_pow2(page_cnt));
 
   return find;
 }
