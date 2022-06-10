@@ -294,6 +294,7 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
 static void buddy_reserve (size_t start, size_t cnt) {
   size_t i;
   size_t end = start + cnt - 1;
+  printf("buddy reserved %d ~ %d\n", start, end);
 
   // link buddys
   for (i = start; i <= end; i++) {
