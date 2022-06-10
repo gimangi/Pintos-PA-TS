@@ -42,7 +42,7 @@ static size_t user_pages, kernel_pages;
 static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
 static bool page_from_pool (const struct pool *, void *page);
-size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value);
+size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool value);
 size_t next_pow2(size_t);
 
 /* Initializes the page allocator.  At most USER_PAGE_LIMIT
@@ -258,7 +258,7 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
   return BUDDY_NOT_FOUND;
 }
 
-size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value) {
+size_t bitmap_scan_buddy_and_flip (const struct bitmap *b, size_t page_cnt, bool value) {
 
   size_t msize = bitmap_size(b);
   size_t find;
