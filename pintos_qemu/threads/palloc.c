@@ -278,7 +278,6 @@ size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t 
 }
 
 size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value) {
-  size_t buddy_start;
 
   size_t msize = bitmap_size(b);
   size_t find;
