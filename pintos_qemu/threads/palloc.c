@@ -12,6 +12,7 @@
 #include "threads/vaddr.h"
 
 #define BUDDY_NOT_FOUND SIZE_MAX
+#define BUDDY_PAGE_MAX 1024
 
 /* Page allocator.  Hands out memory in page-size (or
    page-multiple) chunks.  See malloc.h for an allocator that
@@ -35,19 +36,26 @@ struct pool
     uint8_t *base;                      /* Base of pool. */
   };
 
+/* for buddy system */
+struct balloc_elem {
+  bool alloc;
+  struct balloc_elem *next;
+  struct balloc_elem *prev;
+};
+
 /* Two pools: one for kernel data, one for user pages. */
 static struct pool kernel_pool, user_pool;
 static size_t user_pages, kernel_pages;
-struct list_elem **kernel_buddy_reserv;
-struct list_elem **user_buddy_reserv;
+static struct balloc_elem buddy_list[BUDDY_PAGE_MAX];
+
 
 static void init_pool (struct pool *, void *base, size_t page_cnt,
                        const char *name);
 static bool page_from_pool (const struct pool *, void *page);
 size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value);
-static void buddy_reserve (struct list_elem **list, size_t start, size_t cnt);
-static void buddy_merge (struct list_elem **list, size_t start, size_t cnt);
-static void init_buddy (struct list_elem **buddy, size_t cnt);
+static bool buddy_not_reserved(const struct pool *, size_t start, size_t cnt);
+static void buddy_reserve (size_t start, size_t cnt);
+static void buddy_free (size_t start);
 
 /* Initializes the page allocator.  At most USER_PAGE_LIMIT
    pages are put into the user pool. */
@@ -59,24 +67,17 @@ palloc_init (size_t user_page_limit)
   uint8_t *free_end = ptov (init_ram_pages * PGSIZE);
   size_t free_pages = (free_end - free_start) / PGSIZE;
   user_pages = free_pages / 2;
+
   
   if (user_pages > user_page_limit)
     user_pages = user_page_limit;
   kernel_pages = free_pages - user_pages;
-
-  kernel_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * kernel_pages);
-  user_buddy_reserv = (struct list_elem**) malloc (sizeof(struct list_elem*) * user_pages);
-  //init_buddy (kernel_buddy_reserv, kernel_pages);
-  //init_buddy (user_buddy_reserv, user_pages);
 
   /* Give half of memory to kernel, half to user. */
   init_pool (&kernel_pool, free_start, kernel_pages, "kernel pool");
   init_pool (&user_pool, free_start + kernel_pages * PGSIZE,
              user_pages, "user pool");
 }
-
-//size_t
-//bitmap_scan_buddy_flip(const struct bitmap*)
 
 /* Obtains and returns a group of PAGE_CNT contiguous free pages.
    If PAL_USER is set, the pages are obtained from the user pool,
@@ -234,9 +235,11 @@ palloc_get_status (enum palloc_flags flags)
   printf("\n\n");
 }
 
-bool buddy_not_reserved (const struct list_elem **list_reserv, size_t start, size_t cnt) {
-  for (int i = start; i < start + cnt; i++) {
-    if (list_reserv != NULL)
+static bool buddy_not_reserved (const struct pool *b, size_t start, size_t cnt) {
+  start = (b == kernel_pool.used_map) ? start : start + kernel_pages;
+
+  for (size_t i = start; i < start + cnt; i++) {
+    if (buddy_list[i].alloc)
       return false;
   }
   return true;
@@ -248,7 +251,7 @@ size_t next_pow2(size_t num) {
   return res;
 }
 
-size_t buddy_find(const struct list_elem **list_reserv, const struct bitmap *b, size_t page_cnt, size_t start, size_t end) {
+size_t buddy_find(const struct bitmap *b, size_t page_cnt, size_t start, size_t end) {
 
   size_t gap = end - start + 1;
   size_t upper;
@@ -260,18 +263,18 @@ size_t buddy_find(const struct list_elem **list_reserv, const struct bitmap *b, 
   upper = next_pow2(gap);
 
   if ((upper / 2) < page_cnt && page_cnt <= upper) {
-    //&& buddy_not_reserved(list_reserv, start, page_cnt)
-    if (page_is_empty_multiple(b, start, page_cnt) )
+    
+    if (page_is_empty_multiple(b, start, page_cnt) && buddy_not_reserved(b, start, page_cnt))
       return start;
   }
   else {
     if (upper < 2)
       return BUDDY_NOT_FOUND;
 
-    size_t first = buddy_find(list_reserv, b, page_cnt, start, start + upper / 2 - 1);
+    size_t first = buddy_find(b, page_cnt, start, start + upper / 2 - 1);
     if (first != BUDDY_NOT_FOUND)
       return first;
-    size_t second = buddy_find(list_reserv, b, page_cnt, start + upper / 2, start + upper - 1);
+    size_t second = buddy_find(b, page_cnt, start + upper / 2, start + upper - 1);
     if (second != BUDDY_NOT_FOUND)
       return second;
   }
@@ -279,54 +282,59 @@ size_t buddy_find(const struct list_elem **list_reserv, const struct bitmap *b, 
 }
 
 size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap *b, size_t page_cnt, bool value) {
-  struct list_elem **list_reserv = (pool == &user_pool) ? user_buddy_reserv : kernel_buddy_reserv;
+  size_t buddy_start;
 
   size_t msize = bitmap_size(b);
   size_t find;
 
   ASSERT (page_cnt <= msize);
 
-  find = buddy_find(list_reserv, b, page_cnt, 0, msize-1);
+  find = buddy_find(b, page_cnt, 0, msize-1);
   if (find == BUDDY_NOT_FOUND)
     return BITMAP_ERROR;
   bitmap_set_multiple(b, find, page_cnt, !value);
-  //buddy_reserve(list_reserv, find, page_cnt);
+
+  buddy_start = (pool == &kernel_pool) ? find : find + kernel_pages;
+  buddy_reserve(buddy_start, page_cnt);
 
   return find;
 }
 
-static void init_buddy (struct list_elem **buddy, size_t cnt) {
+
+static void buddy_reserve (size_t start, size_t cnt) {
   size_t i;
-  for (i = 0; i < cnt; i++) {
-    buddy[i] = NULL;
+  size_t end = start + cnt - 1;
+
+  // link buddys
+  for (i = start; i <= end; i++) {
+    buddy_list[i].alloc = true;
+
+    if (i < end) {
+      buddy_list[i].next = &buddy_list[i+1];
+      buddy_list[i+1].prev = &buddy_list[i];
+    }
+
   }
 }
 
-static void buddy_reserve(struct list_elem **list_reserv, size_t start, size_t cnt) {
-  size_t buddy_size = (list_reserv == kernel_buddy_reserv) ? kernel_pages : user_pages;
-  size_t i;
+static void buddy_free (size_t start) {
+  struct balloc_elem *iter = &buddy_list[start];
 
-  // Dynamically allocate elements to connect buddy
-  for (i = start; i < start + cnt; i++) {
-    list_reserv[i] = (struct list_elem *) malloc (sizeof(struct list_elem));
-  }
-  // link buddys
-  for (i = start; i < start + cnt; i++) {
-    if (i != start)
-      list_reserv[i]->next = list_reserv[i + 1];
-    if (i != start + cnt - 1)
-      list_reserv[i]->prev = list_reserv[i - 1];
+  // move to buddy leftmost
+  while (iter->prev != NULL) {
+    iter = iter->prev;
   }
 
-  /* If there is a neighbor buddy, connect
-  */
-  if (0 < start && list_reserv[start - 1] != NULL) {
-    list_reserv[start]->prev = list_reserv[start - 1];
-    list_reserv[start - 1]->next = list_reserv;
-  }
-  if (start + cnt < buddy_size && list_reserv[start + cnt] != NULL) {
-    list_reserv[start + cnt - 1]->next = list_reserv[start + cnt];
-    list_reserv[start + cnt]->prev = list_reserv[start + cnt - 1];
+  struct balloc_elem *prev = NULL;
+  // free buddys
+  while (iter->next != NULL) {
+    iter->alloc = false;
+
+    if (iter->prev != NULL)
+      iter->prev->next = NULL;
+    iter->prev = NULL;
+
+    iter = iter->next;
   }
 
 }
