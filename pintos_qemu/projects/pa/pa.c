@@ -34,8 +34,12 @@ void run_patest(char **argv)
     palloc_free_multiple(p1, 15);
     print_free_pages(15);
 
+    palloc_get_status(PAL_USER);
+
     palloc_get_multiple(PAL_USER, 4);
     print_alloc_pages(4);
+
+    palloc_get_status(PAL_USER);
 
     palloc_get_multiple(PAL_USER, 8);
     print_alloc_pages(8);
