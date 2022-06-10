@@ -284,7 +284,7 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
     return BITMAP_ERROR;
   bitmap_set_multiple(b, find, page_cnt, !value);
 
-  buddy_start = (pool == &kernel_pool) ? find : find + kernel_pages;
+  buddy_start = (pool == &kernel_pool) ? find : find + kernel_pages - 1;
   buddy_reserve(buddy_start, page_cnt);
 
   return find;
@@ -308,7 +308,7 @@ static void buddy_reserve (size_t start, size_t cnt) {
 }
 
 static bool buddy_not_reserved (const struct bitmap *b, size_t start, size_t cnt) {
-  start = (b == kernel_pool.used_map) ? start : start + kernel_pages;
+  start = (b == kernel_pool.used_map) ? start : start + kernel_pages - 1;
   printf("check reserve buddy %d  ~ %ds\n", start, start+cnt) ;
 
   for (size_t i = start; i < start + cnt; i++) {
