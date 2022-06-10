@@ -341,4 +341,8 @@ static void buddy_free (size_t start) {
     iter = iter->next;
   }
 
+  // last element
+  iter->prev = NULL;
+  iter->alloc = false;
+
 }
