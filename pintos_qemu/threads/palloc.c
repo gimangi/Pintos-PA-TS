@@ -313,10 +313,8 @@ static bool buddy_not_reserved (const struct bitmap *b, size_t start, size_t cnt
   start = (b == kernel_pool.used_map) ? start : start + kernel_pages - 1;
 
   for (size_t i = start; i < start + cnt; i++) {
-    if (buddy_list[i].alloc) {
-      printf("cant not reserv at %d (%d ~ %d)\n", i, start, cnt);
+    if (buddy_list[i].alloc)
       return false;
-    }
   }
   return true;
 }
