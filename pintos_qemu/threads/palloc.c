@@ -91,13 +91,16 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
   struct pool *pool = flags & PAL_USER ? &user_pool : &kernel_pool;
   void *pages;
   size_t page_idx;
+  size_t buddy_start;
 
   if (page_cnt == 0)
     return NULL;
 
   lock_acquire (&pool->lock);
-  //page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false); // TODO : modify
   page_idx = bitmap_scan_buddy_and_flip (pool, pool->used_map, page_cnt, false);
+
+  buddy_start = (pool == &kernel_pool) ? page_idx : page_idx + kernel_pages - 1;
+  buddy_reserve(buddy_start, next_pow2(page_cnt));
 
   lock_release (&pool->lock);
 
@@ -285,9 +288,6 @@ size_t bitmap_scan_buddy_and_flip (const struct pool *pool, const struct bitmap 
   if (find == BUDDY_NOT_FOUND)
     return BITMAP_ERROR;
   bitmap_set_multiple(b, find, page_cnt, !value);
-
-  buddy_start = (pool == &kernel_pool) ? find : find + kernel_pages - 1;
-  buddy_reserve(buddy_start, next_pow2(page_cnt));
 
   return find;
 }
