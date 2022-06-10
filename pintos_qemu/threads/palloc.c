@@ -237,6 +237,7 @@ palloc_get_status (enum palloc_flags flags)
 
 static bool buddy_not_reserved (const struct pool *b, size_t start, size_t cnt) {
   start = (b == kernel_pool.used_map) ? start : start + kernel_pages;
+  printf("check reserve buddy %d  ~ %ds\n", start, start+cnt) ;
 
   for (size_t i = start; i < start + cnt; i++) {
     if (buddy_list[i].alloc)
