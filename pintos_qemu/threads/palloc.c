@@ -104,7 +104,6 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
         PANIC ("palloc_get: out of pages");
     }
 
-  printf("page alloc idx:%d, cnt:%d\n", page_idx, page_cnt);
   return pages;
 }
 
