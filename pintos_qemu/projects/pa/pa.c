@@ -23,8 +23,8 @@ void run_patest(char **argv)
     // user pool test
     palloc_get_status(PAL_USER);
 
-    void * p1 = palloc_get_multiple(PAL_USER, 15);
-    print_alloc_pages(15);
+    void * p1 = palloc_get_multiple(PAL_USER, 270);
+    print_alloc_pages(270);
 
     palloc_get_status(PAL_USER);
 
